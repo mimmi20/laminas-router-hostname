@@ -56,6 +56,19 @@ final class HostNameTest extends TestCase
     }
 
     /**
+     * @throws InvalidArgumentException
+     * @throws \Laminas\Stdlib\Exception\InvalidArgumentException
+     */
+    public function testFactoryFailed3(): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionCode(0);
+        $this->expectExceptionMessage('Options must be an Array');
+
+        HostName::factory(true);
+    }
+
+    /**
      * @throws Exception
      * @throws \SebastianBergmann\RecursionContext\InvalidArgumentException
      * @throws InvalidArgumentException
@@ -479,5 +492,42 @@ final class HostNameTest extends TestCase
 
         self::assertSame('', $url);
         self::assertSame(['host', 'port'], $hostname->getAssembledParams());
+    }
+
+    /**
+     * @throws Exception
+     * @throws \SebastianBergmann\RecursionContext\InvalidArgumentException
+     * @throws InvalidArgumentException
+     * @throws \Laminas\Stdlib\Exception\InvalidArgumentException
+     * @throws ReflectionException
+     * @throws InvalidUriPartException
+     */
+    public function testAssemble4(): void
+    {
+        $host     = 'abc.test';
+        $defaults = ['edf' => 'xyz'];
+        $hostname = HostName::factory(new ArrayObject(['host' => $host, 'defaults' => $defaults]));
+
+        self::assertInstanceOf(HostName::class, $hostname);
+
+        $hostP = new ReflectionProperty($hostname, 'host');
+        $hostP->setAccessible(true);
+
+        self::assertSame($host, $hostP->getValue($hostname));
+
+        $defaultsP = new ReflectionProperty($hostname, 'defaults');
+        $defaultsP->setAccessible(true);
+
+        self::assertSame($defaults, $defaultsP->getValue($hostname));
+
+        $portP = new ReflectionProperty($hostname, 'port');
+        $portP->setAccessible(true);
+
+        self::assertNull($portP->getValue($hostname));
+
+        $url = $hostname->assemble([], ['uri' => true]);
+
+        self::assertSame('', $url);
+        self::assertSame([], $hostname->getAssembledParams());
     }
 }
