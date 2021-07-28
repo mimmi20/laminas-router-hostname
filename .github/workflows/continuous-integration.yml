@@ -357,7 +357,6 @@ jobs:
 
         coverage-drivers:
           - "xdebug"
-          - "pcov"
 
     steps:
       - name: "Checkout"
@@ -396,7 +395,7 @@ jobs:
         uses: "codecov/codecov-action@v1.5.2"
         with:
           file: ".build/coverage/clover.xml"
-          flags: "phpunit,php-${{ matrix.php-version }},${{ matrix.coverage-drivers }}"
+          flags: "phpunit,php-${{ matrix.php-version }},${{ matrix.coverage-drivers }},${{ matrix.php-version }}"
           verbose: false
 
       - name: "Run mutation tests with infection/infection"
