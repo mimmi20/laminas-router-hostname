@@ -24,6 +24,7 @@ use Traversable;
 use function array_key_exists;
 use function array_merge;
 use function assert;
+use function mb_strlen;
 use function method_exists;
 use function rawurldecode;
 use function rawurlencode;
@@ -113,7 +114,8 @@ final class HostName implements RouteInterface
                 [
                     'host' => rawurldecode($host),
                 ]
-            )
+            ),
+            mb_strlen($this->host)
         );
     }
 
