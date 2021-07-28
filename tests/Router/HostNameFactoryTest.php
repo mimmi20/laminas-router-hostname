@@ -37,6 +37,21 @@ final class HostNameFactoryTest extends TestCase
     /**
      * @throws ServiceNotCreatedException
      */
+    public function testInvokeWithoutOptions(): void
+    {
+        $container = $this->getMockBuilder(ContainerInterface::class)->getMock();
+        assert($container instanceof ContainerInterface);
+
+        $this->expectException(ServiceNotCreatedException::class);
+        $this->expectExceptionCode(0);
+        $this->expectExceptionMessage('Options must be an Array');
+
+        $this->object->__invoke($container, 'test');
+    }
+
+    /**
+     * @throws ServiceNotCreatedException
+     */
     public function testInvokeFailed(): void
     {
         $container = $this->getMockBuilder(ContainerInterface::class)->getMock();

@@ -23,7 +23,8 @@ use Traversable;
 
 use function array_key_exists;
 use function array_merge;
-use function assert;
+use function is_array;
+use function mb_strlen;
 use function method_exists;
 use function rawurldecode;
 use function rawurlencode;
@@ -67,7 +68,8 @@ final class HostName implements RouteInterface
      *
      * @see    \Laminas\Router\RouteInterface::factory()
      *
-     * @param array<string, (string|array<mixed>)>|Traversable<string, (string|array<mixed>)> $options
+     * @param array<string, (string|array<mixed>)>|Traversable<string, (string|array<mixed>)>|bool $options
+     * @phpstan-param array{host?: string, defaults?: array<mixed>}|Traversable<string, (string|array<mixed>)>|bool $options
      *
      * @throws InvalidArgumentException
      * @throws \Laminas\Stdlib\Exception\InvalidArgumentException
@@ -76,6 +78,10 @@ final class HostName implements RouteInterface
     {
         if ($options instanceof Traversable) {
             $options = ArrayUtils::iteratorToArray($options);
+        }
+
+        if (!is_array($options)) {
+            throw new InvalidArgumentException('Options must be an Array');
         }
 
         if (!array_key_exists('host', $options)) {
@@ -97,8 +103,7 @@ final class HostName implements RouteInterface
             return null;
         }
 
-        $uri = $request->getUri();
-        assert($uri instanceof Http);
+        $uri  = $request->getUri();
         $host = $uri->getHost();
 
         if ($host !== $this->host) {
@@ -113,7 +118,8 @@ final class HostName implements RouteInterface
                 [
                     'host' => rawurldecode($host),
                 ]
-            )
+            ),
+            mb_strlen($this->host)
         );
     }
 
@@ -122,8 +128,9 @@ final class HostName implements RouteInterface
      *
      * @see    \Laminas\Router\RouteInterface::assemble()
      *
-     * @param array<mixed>        $params
-     * @param array<string, Http> $options
+     * @param array<mixed>             $params
+     * @param array<string, bool|Http> $options
+     * @phpstan-param array{uri?: bool|Http} $options
      *
      * @throws InvalidUriPartException
      *

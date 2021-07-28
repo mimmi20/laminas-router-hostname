@@ -21,6 +21,7 @@
     enforceTimeLimit="false"
     executionOrder="default"
     resolveDependencies="true"
+    colors="true"
     >
     <php>
         <ini name="error_reporting" value="-1"/>
@@ -37,8 +38,4 @@
             <directory suffix=".php">src/</directory>
         </include>
     </coverage>
-
-    <logging>
-        <text outputFile="php://stdout"/>
-    </logging>
 </phpunit>

@@ -26,6 +26,7 @@ final class HostNameFactory implements FactoryInterface
      *
      * @param string                                  $requestedName
      * @param array<string, array<mixed>|string>|null $options
+     * @phpstan-param array{host?: string, defaults?: array<mixed>} $options
      *
      * @throws ServiceNotCreatedException if an exception is raised when creating a service
      *
