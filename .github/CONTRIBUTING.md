@@ -51,10 +51,4 @@ to run all the tests.
 
 We are using [`infection/infection`](https://github.com/infection/infection) to ensure a minimum quality of the tests.
 
-Enable `pcov` or `Xdebug` and run
-
-```sh
-vendor/bin/infection
-```
-
-to run mutation tests.
+This is used in the Pipeline only.
