@@ -35,6 +35,7 @@
   },
   "extra": {
     "laminas": {
+      "component": "Mimmi20\\Routing",
       "config-provider": "Mimmi20\\Routing\\ConfigProvider"
     }
   },
