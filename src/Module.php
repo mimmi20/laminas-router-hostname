@@ -13,11 +13,13 @@ declare(strict_types = 1);
 namespace Mimmi20\Routing;
 
 use Laminas\ModuleManager\Feature\ConfigProviderInterface;
+use Laminas\ModuleManager\Feature\DependencyIndicatorInterface;
 
-final class Module implements ConfigProviderInterface
+final class Module implements ConfigProviderInterface, DependencyIndicatorInterface
 {
     /**
      * @return array<string, array<string, array<string, string>>>
+     * @phpstan-return array{route_manager: array{factories: array<class-string, class-string>}, router: array{routes: array<mixed>}}
      */
     public function getConfig(): array
     {
@@ -27,5 +29,15 @@ final class Module implements ConfigProviderInterface
             'route_manager' => $provider->getRouteManagerConfig(),
             'router' => ['routes' => []],
         ];
+    }
+
+    /**
+     * Expected to return an array of modules on which the current one depends on
+     *
+     * @return array<int, string>
+     */
+    public function getModuleDependencies(): array
+    {
+        return ['Laminas\Router'];
     }
 }
