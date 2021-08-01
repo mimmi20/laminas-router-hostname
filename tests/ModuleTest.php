@@ -49,4 +49,20 @@ final class ModuleTest extends TestCase
         self::assertIsArray($config['router']['routes']);
         self::assertCount(0, $config['router']['routes']);
     }
+
+    /**
+     * @throws Exception
+     * @throws InvalidArgumentException
+     */
+    public function testGetModuleDependencies(): void
+    {
+        $module = new Module();
+
+        $config = $module->getModuleDependencies();
+
+        self::assertIsArray($config);
+        self::assertCount(1, $config);
+        self::assertArrayHasKey(0, $config);
+        self::assertContains('Laminas\Router', $config);
+    }
 }

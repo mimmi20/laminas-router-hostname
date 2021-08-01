@@ -21,6 +21,7 @@ final class ConfigProvider
      * Returns configuration from file
      *
      * @return array<string, array<string, array<string, string>>>
+     * @phpstan-return array{route_manager: array{factories: array<class-string, class-string>}, router: array{routes: array<mixed>}}
      */
     public function __invoke(): array
     {
@@ -34,6 +35,7 @@ final class ConfigProvider
      * Get view helper configuration
      *
      * @return array<string, array<string, string>>
+     * @phpstan-return array{factories: array<class-string, class-string>}
      */
     public function getRouteManagerConfig(): array
     {
