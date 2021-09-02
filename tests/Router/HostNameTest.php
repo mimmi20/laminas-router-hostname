@@ -24,7 +24,6 @@ use PHPUnit\Framework\TestCase;
 use ReflectionException;
 use ReflectionProperty;
 
-use function mb_strlen;
 use function rawurldecode;
 
 final class HostNameTest extends TestCase
@@ -333,7 +332,7 @@ final class HostNameTest extends TestCase
         self::assertInstanceOf(RouteMatch::class, $match);
 
         self::assertSame($defaults + ['host' => rawurldecode($host)], $match->getParams());
-        self::assertSame(mb_strlen($host), $match->getLength());
+        self::assertSame(0, $match->getLength());
 
         $portP = new ReflectionProperty($hostname, 'port');
         $portP->setAccessible(true);
