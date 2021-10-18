@@ -13,7 +13,7 @@
   ],
   "require": {
     "php": "^7.4.3 || ^8.0.0",
-    "laminas/laminas-router": "^3.4.5"
+    "laminas/laminas-router": "^3.5.0"
   },
   "require-dev": {
     "laminas/laminas-dependency-plugin": "^2.2.0",
