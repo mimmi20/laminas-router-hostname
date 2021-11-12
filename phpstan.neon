@@ -13,13 +13,13 @@ parameters:
   checkGenericClassInNonGenericObjectType: false
   checkMissingIterableValueType: false
   treatPhpDocTypesAsCertain: false
-  implicitThrows: false
   exceptions:
+    implicitThrows: false
     checkedExceptionRegexes:
       - '#Exception#'
       - '#Throwable#'
     check:
       missingCheckedExceptionInThrows: true
       tooWideThrowType: true
-#  ignoreErrors:
-#    - '~PHPDoc tag @throws with type .* is not compatible with parent~'
+  ignoreErrors:
+    - '~Parameter #1 \$options of static method Mimmi20\\Routing\\Router\\HostName::factory\(\) expects array{host\?: string, defaults\?: array<int\|string, mixed>}\|bool\|Traversable<string, mixed>, ArrayObject<string,~'
