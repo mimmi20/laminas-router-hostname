@@ -22,8 +22,6 @@ use function is_array;
 final class HostNameFactory implements FactoryInterface
 {
     /**
-     * Create an object
-     *
      * @param string                                  $requestedName
      * @param array<string, array<mixed>|string>|null $options
      * @phpstan-param array{host?: string, defaults?: array<mixed>} $options
