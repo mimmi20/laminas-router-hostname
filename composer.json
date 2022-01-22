@@ -23,12 +23,12 @@
     "laminas/laminas-dependency-plugin": "^2.2.0",
     "laminas/laminas-modulemanager": "^2.11.0",
     "laminas/laminas-servicemanager": "^3.10.0",
-    "mimmi20/coding-standard": "^2.6.1",
+    "mimmi20/coding-standard": "^2.6.2",
     "phpstan/extension-installer": "^1.1.0",
-    "phpstan/phpstan": "^1.4.0",
+    "phpstan/phpstan": "^1.4.2",
     "phpstan/phpstan-deprecation-rules": "^1.0.0",
     "phpstan/phpstan-phpunit": "^1.0.0",
-    "phpunit/phpunit": "^9.5.11"
+    "phpunit/phpunit": "^9.5.12"
   },
   "suggest": {
     "laminas/laminas-servicemanager": "Required for the Factories"
@@ -45,7 +45,12 @@
   },
   "config": {
     "preferred-install": "dist",
-    "sort-packages": true
+    "sort-packages": true,
+    "allow-plugins": {
+      "dealerdirect/phpcodesniffer-composer-installer": true,
+      "laminas/laminas-dependency-plugin": true,
+      "phpstan/extension-installer": true
+    }
   },
   "extra": {
     "laminas": {
