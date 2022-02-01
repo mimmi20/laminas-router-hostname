@@ -103,11 +103,8 @@ final class HostNameTest extends TestCase
     }
 
     /**
-     * @throws Exception
-     * @throws \SebastianBergmann\RecursionContext\InvalidArgumentException
      * @throws InvalidArgumentException
      * @throws \Laminas\Stdlib\Exception\InvalidArgumentException
-     * @throws ReflectionException
      */
     public function testFactoryWithOneWrongHost(): void
     {
@@ -226,11 +223,8 @@ final class HostNameTest extends TestCase
     }
 
     /**
-     * @throws Exception
-     * @throws \SebastianBergmann\RecursionContext\InvalidArgumentException
      * @throws InvalidArgumentException
      * @throws \Laminas\Stdlib\Exception\InvalidArgumentException
-     * @throws ReflectionException
      */
     public function testFactoryWithWrongHosts(): void
     {

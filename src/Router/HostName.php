@@ -22,8 +22,12 @@ use Laminas\Uri\Http;
 use Traversable;
 
 use function array_key_exists;
+use function array_keys;
 use function array_merge;
+use function count;
+use function in_array;
 use function is_array;
+use function is_string;
 use function method_exists;
 use function rawurldecode;
 use function rawurlencode;
@@ -33,9 +37,7 @@ use function rawurlencode;
  */
 final class HostName implements RouteInterface
 {
-    /**
-     * @var array<string>
-     */
+    /** @var array<string> */
     private array $hosts = [];
 
     private ?string $host = null;
@@ -165,8 +167,8 @@ final class HostName implements RouteInterface
 
                 $this->assembledParams[] = 'host';
             } elseif (1 === count($this->hosts)) {
-                $keys = array_keys($this->hosts);
-                $host = $this->hosts[$keys[0]];
+                $keys       = array_keys($this->hosts);
+                $host       = $this->hosts[$keys[0]];
                 $this->host = $host;
 
                 $options['uri']->setHost(rawurlencode($this->host));
