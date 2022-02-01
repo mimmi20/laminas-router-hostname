@@ -36,7 +36,7 @@ final class HostNameTest extends TestCase
     {
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionCode(0);
-        $this->expectExceptionMessage('required config key "host" is missing');
+        $this->expectExceptionMessage('one of config keys "host" or "hosts" is required');
 
         HostName::factory();
     }
@@ -49,7 +49,7 @@ final class HostNameTest extends TestCase
     {
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionCode(0);
-        $this->expectExceptionMessage('required config key "host" is missing');
+        $this->expectExceptionMessage('one of config keys "host" or "hosts" is required');
 
         HostName::factory([]);
     }
@@ -74,17 +74,22 @@ final class HostNameTest extends TestCase
      * @throws \Laminas\Stdlib\Exception\InvalidArgumentException
      * @throws ReflectionException
      */
-    public function testFactory(): void
+    public function testFactoryWithOneHost(): void
     {
         $host     = 'abc.test';
         $hostname = HostName::factory(['host' => $host]);
 
         self::assertInstanceOf(HostName::class, $hostname);
 
+        $hostsP = new ReflectionProperty($hostname, 'hosts');
+        $hostsP->setAccessible(true);
+
+        self::assertSame([$host], $hostsP->getValue($hostname));
+
         $hostP = new ReflectionProperty($hostname, 'host');
         $hostP->setAccessible(true);
 
-        self::assertSame($host, $hostP->getValue($hostname));
+        self::assertNull($hostP->getValue($hostname));
 
         $defaultsP = new ReflectionProperty($hostname, 'defaults');
         $defaultsP->setAccessible(true);
@@ -98,13 +103,26 @@ final class HostNameTest extends TestCase
     }
 
     /**
+     * @throws InvalidArgumentException
+     * @throws \Laminas\Stdlib\Exception\InvalidArgumentException
+     */
+    public function testFactoryWithOneWrongHost(): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionCode(0);
+        $this->expectExceptionMessage('the config key "host" must be a string');
+
+        HostName::factory(['host' => 1234]);
+    }
+
+    /**
      * @throws Exception
      * @throws \SebastianBergmann\RecursionContext\InvalidArgumentException
      * @throws InvalidArgumentException
      * @throws \Laminas\Stdlib\Exception\InvalidArgumentException
      * @throws ReflectionException
      */
-    public function testFactory2(): void
+    public function testFactoryWithOneHostAndDefaults(): void
     {
         $host     = 'abc.test';
         $defaults = ['edf' => 'xyz'];
@@ -112,10 +130,15 @@ final class HostNameTest extends TestCase
 
         self::assertInstanceOf(HostName::class, $hostname);
 
+        $hostsP = new ReflectionProperty($hostname, 'hosts');
+        $hostsP->setAccessible(true);
+
+        self::assertSame([$host], $hostsP->getValue($hostname));
+
         $hostP = new ReflectionProperty($hostname, 'host');
         $hostP->setAccessible(true);
 
-        self::assertSame($host, $hostP->getValue($hostname));
+        self::assertNull($hostP->getValue($hostname));
 
         $defaultsP = new ReflectionProperty($hostname, 'defaults');
         $defaultsP->setAccessible(true);
@@ -135,17 +158,22 @@ final class HostNameTest extends TestCase
      * @throws \Laminas\Stdlib\Exception\InvalidArgumentException
      * @throws ReflectionException
      */
-    public function testFactoryWithArrayAccess(): void
+    public function testFactoryWithOneHostAndArrayAccess(): void
     {
         $host     = 'abc.test';
         $hostname = HostName::factory(new ArrayObject(['host' => $host]));
 
         self::assertInstanceOf(HostName::class, $hostname);
 
+        $hostsP = new ReflectionProperty($hostname, 'hosts');
+        $hostsP->setAccessible(true);
+
+        self::assertSame([$host], $hostsP->getValue($hostname));
+
         $hostP = new ReflectionProperty($hostname, 'host');
         $hostP->setAccessible(true);
 
-        self::assertSame($host, $hostP->getValue($hostname));
+        self::assertNull($hostP->getValue($hostname));
 
         $defaultsP = new ReflectionProperty($hostname, 'defaults');
         $defaultsP->setAccessible(true);
@@ -165,7 +193,7 @@ final class HostNameTest extends TestCase
      * @throws \Laminas\Stdlib\Exception\InvalidArgumentException
      * @throws ReflectionException
      */
-    public function testFactoryWithArrayAccess2(): void
+    public function testFactoryWithOneHostAndDefaultsAndArrayAccess(): void
     {
         $host     = 'abc.test';
         $defaults = ['edf' => 'xyz'];
@@ -173,15 +201,69 @@ final class HostNameTest extends TestCase
 
         self::assertInstanceOf(HostName::class, $hostname);
 
+        $hostsP = new ReflectionProperty($hostname, 'hosts');
+        $hostsP->setAccessible(true);
+
+        self::assertSame([$host], $hostsP->getValue($hostname));
+
         $hostP = new ReflectionProperty($hostname, 'host');
         $hostP->setAccessible(true);
 
-        self::assertSame($host, $hostP->getValue($hostname));
+        self::assertNull($hostP->getValue($hostname));
 
         $defaultsP = new ReflectionProperty($hostname, 'defaults');
         $defaultsP->setAccessible(true);
 
         self::assertSame($defaults, $defaultsP->getValue($hostname));
+
+        $portP = new ReflectionProperty($hostname, 'port');
+        $portP->setAccessible(true);
+
+        self::assertNull($portP->getValue($hostname));
+    }
+
+    /**
+     * @throws InvalidArgumentException
+     * @throws \Laminas\Stdlib\Exception\InvalidArgumentException
+     */
+    public function testFactoryWithWrongHosts(): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionCode(0);
+        $this->expectExceptionMessage('the config key "hosts" must be an array');
+
+        HostName::factory(['hosts' => 1234]);
+    }
+
+    /**
+     * @throws Exception
+     * @throws \SebastianBergmann\RecursionContext\InvalidArgumentException
+     * @throws InvalidArgumentException
+     * @throws \Laminas\Stdlib\Exception\InvalidArgumentException
+     * @throws ReflectionException
+     */
+    public function testFactoryWithTwoHosts(): void
+    {
+        $hostOne  = 'abc.test';
+        $hostTow  = 'abc2.test';
+        $hostname = HostName::factory(['hosts' => [$hostOne, $hostTow]]);
+
+        self::assertInstanceOf(HostName::class, $hostname);
+
+        $hostsP = new ReflectionProperty($hostname, 'hosts');
+        $hostsP->setAccessible(true);
+
+        self::assertSame([$hostOne, $hostTow], $hostsP->getValue($hostname));
+
+        $hostP = new ReflectionProperty($hostname, 'host');
+        $hostP->setAccessible(true);
+
+        self::assertNull($hostP->getValue($hostname));
+
+        $defaultsP = new ReflectionProperty($hostname, 'defaults');
+        $defaultsP->setAccessible(true);
+
+        self::assertSame([], $defaultsP->getValue($hostname));
 
         $portP = new ReflectionProperty($hostname, 'port');
         $portP->setAccessible(true);
@@ -196,7 +278,43 @@ final class HostNameTest extends TestCase
      * @throws \Laminas\Stdlib\Exception\InvalidArgumentException
      * @throws ReflectionException
      */
-    public function testMatch(): void
+    public function testFactoryWithTwoHostsAndArrayAccess(): void
+    {
+        $hostOne  = 'abc.test';
+        $hostTow  = 'abc2.test';
+        $hostname = HostName::factory(new ArrayObject(['hosts' => [$hostOne, $hostTow]]));
+
+        self::assertInstanceOf(HostName::class, $hostname);
+
+        $hostsP = new ReflectionProperty($hostname, 'hosts');
+        $hostsP->setAccessible(true);
+
+        self::assertSame([$hostOne, $hostTow], $hostsP->getValue($hostname));
+
+        $hostP = new ReflectionProperty($hostname, 'host');
+        $hostP->setAccessible(true);
+
+        self::assertNull($hostP->getValue($hostname));
+
+        $defaultsP = new ReflectionProperty($hostname, 'defaults');
+        $defaultsP->setAccessible(true);
+
+        self::assertSame([], $defaultsP->getValue($hostname));
+
+        $portP = new ReflectionProperty($hostname, 'port');
+        $portP->setAccessible(true);
+
+        self::assertNull($portP->getValue($hostname));
+    }
+
+    /**
+     * @throws Exception
+     * @throws \SebastianBergmann\RecursionContext\InvalidArgumentException
+     * @throws InvalidArgumentException
+     * @throws \Laminas\Stdlib\Exception\InvalidArgumentException
+     * @throws ReflectionException
+     */
+    public function testMatchWithoutUri(): void
     {
         $host     = 'abc.test';
         $defaults = ['edf' => 'xyz'];
@@ -204,10 +322,15 @@ final class HostNameTest extends TestCase
 
         self::assertInstanceOf(HostName::class, $hostname);
 
+        $hostsP = new ReflectionProperty($hostname, 'hosts');
+        $hostsP->setAccessible(true);
+
+        self::assertSame([$host], $hostsP->getValue($hostname));
+
         $hostP = new ReflectionProperty($hostname, 'host');
         $hostP->setAccessible(true);
 
-        self::assertSame($host, $hostP->getValue($hostname));
+        self::assertNull($hostP->getValue($hostname));
 
         $defaultsP = new ReflectionProperty($hostname, 'defaults');
         $defaultsP->setAccessible(true);
@@ -235,7 +358,7 @@ final class HostNameTest extends TestCase
      * @throws \Laminas\Stdlib\Exception\InvalidArgumentException
      * @throws ReflectionException
      */
-    public function testMatch2(): void
+    public function testMatchWithNullUri(): void
     {
         $host     = 'abc.test';
         $defaults = ['edf' => 'xyz'];
@@ -243,10 +366,15 @@ final class HostNameTest extends TestCase
 
         self::assertInstanceOf(HostName::class, $hostname);
 
+        $hostsP = new ReflectionProperty($hostname, 'hosts');
+        $hostsP->setAccessible(true);
+
+        self::assertSame([$host], $hostsP->getValue($hostname));
+
         $hostP = new ReflectionProperty($hostname, 'host');
         $hostP->setAccessible(true);
 
-        self::assertSame($host, $hostP->getValue($hostname));
+        self::assertNull($hostP->getValue($hostname));
 
         $defaultsP = new ReflectionProperty($hostname, 'defaults');
         $defaultsP->setAccessible(true);
@@ -286,7 +414,7 @@ final class HostNameTest extends TestCase
      * @throws \Laminas\Stdlib\Exception\InvalidArgumentException
      * @throws ReflectionException
      */
-    public function testMatch3(): void
+    public function testMatchWithUri(): void
     {
         $host     = 'abc.test';
         $port     = 80;
@@ -295,10 +423,15 @@ final class HostNameTest extends TestCase
 
         self::assertInstanceOf(HostName::class, $hostname);
 
+        $hostsP = new ReflectionProperty($hostname, 'hosts');
+        $hostsP->setAccessible(true);
+
+        self::assertSame([$host], $hostsP->getValue($hostname));
+
         $hostP = new ReflectionProperty($hostname, 'host');
         $hostP->setAccessible(true);
 
-        self::assertSame($host, $hostP->getValue($hostname));
+        self::assertNull($hostP->getValue($hostname));
 
         $defaultsP = new ReflectionProperty($hostname, 'defaults');
         $defaultsP->setAccessible(true);
@@ -348,7 +481,7 @@ final class HostNameTest extends TestCase
      * @throws ReflectionException
      * @throws InvalidUriPartException
      */
-    public function testAssemble(): void
+    public function testAssembleWithoutUri(): void
     {
         $host     = 'abc.test';
         $defaults = ['edf' => 'xyz'];
@@ -356,10 +489,15 @@ final class HostNameTest extends TestCase
 
         self::assertInstanceOf(HostName::class, $hostname);
 
+        $hostsP = new ReflectionProperty($hostname, 'hosts');
+        $hostsP->setAccessible(true);
+
+        self::assertSame([$host], $hostsP->getValue($hostname));
+
         $hostP = new ReflectionProperty($hostname, 'host');
         $hostP->setAccessible(true);
 
-        self::assertSame($host, $hostP->getValue($hostname));
+        self::assertNull($hostP->getValue($hostname));
 
         $defaultsP = new ReflectionProperty($hostname, 'defaults');
         $defaultsP->setAccessible(true);
@@ -385,7 +523,7 @@ final class HostNameTest extends TestCase
      * @throws ReflectionException
      * @throws InvalidUriPartException
      */
-    public function testAssemble2(): void
+    public function testAssembleWithUriAndOneHost(): void
     {
         $host     = 'abc.test';
         $defaults = ['edf' => 'xyz'];
@@ -393,10 +531,15 @@ final class HostNameTest extends TestCase
 
         self::assertInstanceOf(HostName::class, $hostname);
 
+        $hostsP = new ReflectionProperty($hostname, 'hosts');
+        $hostsP->setAccessible(true);
+
+        self::assertSame([$host], $hostsP->getValue($hostname));
+
         $hostP = new ReflectionProperty($hostname, 'host');
         $hostP->setAccessible(true);
 
-        self::assertSame($host, $hostP->getValue($hostname));
+        self::assertNull($hostP->getValue($hostname));
 
         $defaultsP = new ReflectionProperty($hostname, 'defaults');
         $defaultsP->setAccessible(true);
@@ -431,19 +574,23 @@ final class HostNameTest extends TestCase
      * @throws ReflectionException
      * @throws InvalidUriPartException
      */
-    public function testAssemble3(): void
+    public function testAssembleWithUriAndSingleHost(): void
     {
         $host     = 'abc.test';
-        $port     = 80;
         $defaults = ['edf' => 'xyz'];
-        $hostname = HostName::factory(new ArrayObject(['host' => $host, 'defaults' => $defaults]));
+        $hostname = HostName::factory(new ArrayObject(['hosts' => [$host], 'defaults' => $defaults]));
 
         self::assertInstanceOf(HostName::class, $hostname);
+
+        $hostsP = new ReflectionProperty($hostname, 'hosts');
+        $hostsP->setAccessible(true);
+
+        self::assertSame([$host], $hostsP->getValue($hostname));
 
         $hostP = new ReflectionProperty($hostname, 'host');
         $hostP->setAccessible(true);
 
-        self::assertSame($host, $hostP->getValue($hostname));
+        self::assertNull($hostP->getValue($hostname));
 
         $defaultsP = new ReflectionProperty($hostname, 'defaults');
         $defaultsP->setAccessible(true);
@@ -459,15 +606,71 @@ final class HostNameTest extends TestCase
             ->disableOriginalConstructor()
             ->getMock();
         $uri->expects(self::once())
-            ->method('getHost')
-            ->willReturn($host);
-        $uri->expects(self::once())
-            ->method('getPort')
-            ->willReturn($port);
-        $uri->expects(self::once())
             ->method('setHost')
             ->with($host);
-        $uri->expects(self::once())
+        $uri->expects(self::never())
+            ->method('setPort');
+
+        $url = $hostname->assemble([], ['uri' => $uri]);
+
+        self::assertSame('', $url);
+        self::assertSame(['host'], $hostname->getAssembledParams());
+    }
+
+    /**
+     * @throws Exception
+     * @throws \SebastianBergmann\RecursionContext\InvalidArgumentException
+     * @throws InvalidArgumentException
+     * @throws \Laminas\Stdlib\Exception\InvalidArgumentException
+     * @throws ReflectionException
+     * @throws InvalidUriPartException
+     */
+    public function testAssembleWithUriAfterMatch(): void
+    {
+        $host     = 'abc.test';
+        $port     = 80;
+        $defaults = ['edf' => 'xyz'];
+        $hostname = HostName::factory(new ArrayObject(['host' => $host, 'defaults' => $defaults]));
+
+        self::assertInstanceOf(HostName::class, $hostname);
+
+        $hostsP = new ReflectionProperty($hostname, 'hosts');
+        $hostsP->setAccessible(true);
+
+        self::assertSame([$host], $hostsP->getValue($hostname));
+
+        $hostP = new ReflectionProperty($hostname, 'host');
+        $hostP->setAccessible(true);
+
+        self::assertNull($hostP->getValue($hostname));
+
+        $defaultsP = new ReflectionProperty($hostname, 'defaults');
+        $defaultsP->setAccessible(true);
+
+        self::assertSame($defaults, $defaultsP->getValue($hostname));
+
+        $portP = new ReflectionProperty($hostname, 'port');
+        $portP->setAccessible(true);
+
+        self::assertNull($portP->getValue($hostname));
+
+        $uri1 = $this->getMockBuilder(Http::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $uri1->expects(self::once())
+            ->method('getHost')
+            ->willReturn($host);
+        $uri1->expects(self::once())
+            ->method('getPort')
+            ->willReturn($port);
+
+        $uri2 = $this->getMockBuilder(Http::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $uri2->expects(self::once())
+            ->method('setHost')
+            ->with($host);
+        $uri2->expects(self::once())
             ->method('setPort')
             ->with($port);
 
@@ -476,7 +679,7 @@ final class HostNameTest extends TestCase
             ->getMock();
         $request->expects(self::once())
             ->method('getUri')
-            ->willReturn($uri);
+            ->willReturn($uri1);
 
         $match = $hostname->match($request);
 
@@ -487,7 +690,7 @@ final class HostNameTest extends TestCase
 
         self::assertSame($port, $portP->getValue($hostname));
 
-        $url = $hostname->assemble([], ['uri' => $uri]);
+        $url = $hostname->assemble([], ['uri' => $uri2]);
 
         self::assertSame('', $url);
         self::assertSame(['host', 'port'], $hostname->getAssembledParams());
@@ -501,7 +704,7 @@ final class HostNameTest extends TestCase
      * @throws ReflectionException
      * @throws InvalidUriPartException
      */
-    public function testAssemble4(): void
+    public function testAssembleWithBoolUri(): void
     {
         $host     = 'abc.test';
         $defaults = ['edf' => 'xyz'];
@@ -509,10 +712,15 @@ final class HostNameTest extends TestCase
 
         self::assertInstanceOf(HostName::class, $hostname);
 
+        $hostsP = new ReflectionProperty($hostname, 'hosts');
+        $hostsP->setAccessible(true);
+
+        self::assertSame([$host], $hostsP->getValue($hostname));
+
         $hostP = new ReflectionProperty($hostname, 'host');
         $hostP->setAccessible(true);
 
-        self::assertSame($host, $hostP->getValue($hostname));
+        self::assertNull($hostP->getValue($hostname));
 
         $defaultsP = new ReflectionProperty($hostname, 'defaults');
         $defaultsP->setAccessible(true);
