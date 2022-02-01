@@ -33,7 +33,12 @@ use function rawurlencode;
  */
 final class HostName implements RouteInterface
 {
-    private string $host = '';
+    /**
+     * @var array<string>
+     */
+    private array $hosts = [];
+
+    private ?string $host = null;
 
     private ?int $port = null;
 
@@ -54,11 +59,12 @@ final class HostName implements RouteInterface
     /**
      * Create a new hostname route.
      *
-     * @param array<mixed> $defaults
+     * @param array<string> $hosts
+     * @param array<mixed>  $defaults
      */
-    public function __construct(string $host, array $defaults = [])
+    public function __construct(array $hosts, array $defaults = [])
     {
-        $this->host     = $host;
+        $this->hosts    = $hosts;
         $this->defaults = $defaults;
     }
 
@@ -68,7 +74,7 @@ final class HostName implements RouteInterface
      * @see    \Laminas\Router\RouteInterface::factory()
      *
      * @param array<string, (string|array<int|string, mixed>)>|Traversable<string, mixed>|bool $options
-     * @phpstan-param array{host?: string, defaults?: array<int|string, mixed>}|Traversable<string, mixed>|bool $options
+     * @phpstan-param array{host?: string, hosts?: array<int|string, string>, defaults?: array<int|string, mixed>}|Traversable<string, mixed>|bool $options
      *
      * @throws InvalidArgumentException
      * @throws \Laminas\Stdlib\Exception\InvalidArgumentException
@@ -83,12 +89,26 @@ final class HostName implements RouteInterface
             throw new InvalidArgumentException('Options must be an Array');
         }
 
-        if (!array_key_exists('host', $options)) {
-            throw new InvalidArgumentException('required config key "host" is missing');
+        if (!array_key_exists('host', $options) && !array_key_exists('hosts', $options)) {
+            throw new InvalidArgumentException('one of config keys "host" or "hosts" is required');
+        }
+
+        if (array_key_exists('hosts', $options)) {
+            if (!is_array($options['hosts'])) {
+                throw new InvalidArgumentException('the config key "hosts" must be an array');
+            }
+
+            $hosts = $options['hosts'];
+        } else {
+            if (!is_string($options['host'])) {
+                throw new InvalidArgumentException('the config key "host" must be a string');
+            }
+
+            $hosts = [$options['host']];
         }
 
         return new self(
-            $options['host'],
+            $hosts,
             $options['defaults'] ?? []
         );
     }
@@ -105,11 +125,12 @@ final class HostName implements RouteInterface
         $uri  = $request->getUri();
         $host = $uri->getHost();
 
-        if ($host !== $this->host) {
+        if (!in_array($host, $this->hosts, true)) {
             return null;
         }
 
         $this->port = $uri->getPort();
+        $this->host = $host;
 
         return new RouteMatch(
             array_merge(
@@ -138,10 +159,20 @@ final class HostName implements RouteInterface
     {
         $this->assembledParams = [];
 
-        if (isset($options['uri']) && $options['uri'] instanceof Http && null !== $this->host) {
-            $options['uri']->setHost(rawurlencode($this->host));
+        if (array_key_exists('uri', $options) && $options['uri'] instanceof Http) {
+            if (null !== $this->host) {
+                $options['uri']->setHost(rawurlencode($this->host));
 
-            $this->assembledParams[] = 'host';
+                $this->assembledParams[] = 'host';
+            } elseif (1 === count($this->hosts)) {
+                $keys = array_keys($this->hosts);
+                $host = $this->hosts[$keys[0]];
+                $this->host = $host;
+
+                $options['uri']->setHost(rawurlencode($this->host));
+
+                $this->assembledParams[] = 'host';
+            }
 
             if (null !== $this->port) {
                 $options['uri']->setPort($this->port);
