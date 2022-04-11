@@ -22,7 +22,7 @@
   "require-dev": {
     "laminas/laminas-dependency-plugin": "^2.2.0",
     "laminas/laminas-modulemanager": "^2.11.0",
-    "laminas/laminas-servicemanager": "^3.10.0",
+    "laminas/laminas-servicemanager": "^3.11.2",
     "mimmi20/coding-standard": "^2.7.0",
     "phpstan/extension-installer": "^1.1.0",
     "phpstan/phpstan": "^1.5.4",
