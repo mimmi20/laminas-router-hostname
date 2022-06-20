@@ -22,9 +22,9 @@ use function is_array;
 final class HostNameFactory implements FactoryInterface
 {
     /**
-     * @param string                                  $requestedName
-     * @param array<string, array<mixed>|string>|null $options
-     * @phpstan-param array{host?: string, defaults?: array<mixed>} $options
+     * @param string                                                $requestedName
+     * @param array<string, (string|array<int|string, mixed>)>|null $options
+     * @phpstan-param array{host?: string, hosts?: array<int|string, string>, defaults?: array<int|string, mixed>}|null $options
      *
      * @throws ServiceNotCreatedException if an exception is raised when creating a service
      *

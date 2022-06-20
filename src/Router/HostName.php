@@ -61,8 +61,8 @@ final class HostName implements RouteInterface
     /**
      * Create a new hostname route.
      *
-     * @param array<string> $hosts
-     * @param array<mixed>  $defaults
+     * @param array<string>            $hosts
+     * @param array<int|string, mixed> $defaults
      */
     public function __construct(array $hosts, array $defaults = [])
     {
@@ -109,10 +109,17 @@ final class HostName implements RouteInterface
             $hosts = [$options['host']];
         }
 
-        return new self(
-            $hosts,
-            $options['defaults'] ?? []
-        );
+        if (array_key_exists('defaults', $options)) {
+            if (!is_array($options['defaults'])) {
+                throw new InvalidArgumentException('the optional config key "defaults" must be an array, if available');
+            }
+
+            $defaults = $options['defaults'];
+        } else {
+            $defaults = [];
+        }
+
+        return new self($hosts, $defaults);
     }
 
     /**
