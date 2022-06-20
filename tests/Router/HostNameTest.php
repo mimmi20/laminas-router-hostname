@@ -737,4 +737,19 @@ final class HostNameTest extends TestCase
         self::assertSame('', $url);
         self::assertSame([], $hostname->getAssembledParams());
     }
+
+    /**
+     * @throws InvalidArgumentException
+     * @throws \Laminas\Stdlib\Exception\InvalidArgumentException
+     */
+    public function testFactoryWithWrongDefaults(): void
+    {
+        $host = 'abc.test';
+
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionCode(0);
+        $this->expectExceptionMessage('the optional config key "defaults" must be an array, if available');
+
+        HostName::factory(['host' => $host, 'defaults' => 1234]);
+    }
 }
