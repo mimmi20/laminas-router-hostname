@@ -23,7 +23,9 @@ use Traversable;
 
 use function array_key_exists;
 use function array_keys;
+use function array_map;
 use function array_merge;
+use function assert;
 use function count;
 use function in_array;
 use function is_array;
@@ -37,12 +39,9 @@ use function rawurlencode;
  */
 final class HostName implements RouteInterface
 {
-    /** @var array<string> */
-    private array $hosts = [];
+    private string | null $host = null;
 
-    private ?string $host = null;
-
-    private ?int $port = null;
+    private int | null $port = null;
 
     /**
      * Default values.
@@ -64,9 +63,8 @@ final class HostName implements RouteInterface
      * @param array<string>            $hosts
      * @param array<int|string, mixed> $defaults
      */
-    public function __construct(array $hosts, array $defaults = [])
+    public function __construct(private array $hosts = [], array $defaults = [])
     {
-        $this->hosts    = $hosts;
         $this->defaults = $defaults;
     }
 
@@ -125,16 +123,18 @@ final class HostName implements RouteInterface
     /**
      * match(): defined by RouteInterface interface.
      */
-    public function match(Request $request): ?RouteMatch
+    public function match(Request $request): RouteMatch | null
     {
         if (!method_exists($request, 'getUri')) {
             return null;
         }
 
-        $uri  = $request->getUri();
+        $uri = $request->getUri();
+        assert($uri instanceof Http);
+
         $host = $uri->getHost();
 
-        if (!in_array($host, $this->hosts, true)) {
+        if (null === $host || !in_array(mb_strtolower($host), array_map('strtolower', $this->hosts), true)) {
             return null;
         }
 
@@ -146,8 +146,8 @@ final class HostName implements RouteInterface
                 $this->defaults,
                 [
                     'host' => rawurldecode($host),
-                ]
-            )
+                ],
+            ),
         );
     }
 

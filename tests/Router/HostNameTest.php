@@ -704,6 +704,85 @@ final class HostNameTest extends TestCase
      * @throws ReflectionException
      * @throws InvalidUriPartException
      */
+    public function testAssembleWithUriAfterMatch2(): void
+    {
+        $host     = 'abc.test';
+        $port     = 80;
+        $defaults = ['edf' => 'xyz'];
+        $hostname = HostName::factory(new ArrayObject(['host' => mb_strtoupper($host), 'defaults' => $defaults]));
+
+        self::assertInstanceOf(HostName::class, $hostname);
+
+        $hostsP = new ReflectionProperty($hostname, 'hosts');
+        $hostsP->setAccessible(true);
+
+        self::assertSame([mb_strtoupper($host)], $hostsP->getValue($hostname));
+
+        $hostP = new ReflectionProperty($hostname, 'host');
+        $hostP->setAccessible(true);
+
+        self::assertNull($hostP->getValue($hostname));
+
+        $defaultsP = new ReflectionProperty($hostname, 'defaults');
+        $defaultsP->setAccessible(true);
+
+        self::assertSame($defaults, $defaultsP->getValue($hostname));
+
+        $portP = new ReflectionProperty($hostname, 'port');
+        $portP->setAccessible(true);
+
+        self::assertNull($portP->getValue($hostname));
+
+        $uri1 = $this->getMockBuilder(Http::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $uri1->expects(self::once())
+            ->method('getHost')
+            ->willReturn($host);
+        $uri1->expects(self::once())
+            ->method('getPort')
+            ->willReturn($port);
+
+        $uri2 = $this->getMockBuilder(Http::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $uri2->expects(self::once())
+            ->method('setHost')
+            ->with($host);
+        $uri2->expects(self::once())
+            ->method('setPort')
+            ->with($port);
+
+        $request = $this->getMockBuilder(\Laminas\Http\Request::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $request->expects(self::once())
+            ->method('getUri')
+            ->willReturn($uri1);
+
+        $match = $hostname->match($request);
+
+        self::assertInstanceOf(RouteMatch::class, $match);
+
+        $portP = new ReflectionProperty($hostname, 'port');
+        $portP->setAccessible(true);
+
+        self::assertSame($port, $portP->getValue($hostname));
+
+        $url = $hostname->assemble([], ['uri' => $uri2]);
+
+        self::assertSame('', $url);
+        self::assertSame(['host', 'port'], $hostname->getAssembledParams());
+    }
+
+    /**
+     * @throws Exception
+     * @throws \SebastianBergmann\RecursionContext\InvalidArgumentException
+     * @throws InvalidArgumentException
+     * @throws \Laminas\Stdlib\Exception\InvalidArgumentException
+     * @throws ReflectionException
+     * @throws InvalidUriPartException
+     */
     public function testAssembleWithBoolUri(): void
     {
         $host     = 'abc.test';
