@@ -24,6 +24,7 @@ use PHPUnit\Framework\TestCase;
 use ReflectionException;
 use ReflectionProperty;
 
+use function mb_strtoupper;
 use function rawurldecode;
 
 final class HostNameTest extends TestCase

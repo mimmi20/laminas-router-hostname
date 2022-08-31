@@ -30,6 +30,7 @@ use function count;
 use function in_array;
 use function is_array;
 use function is_string;
+use function mb_strtolower;
 use function method_exists;
 use function rawurldecode;
 use function rawurlencode;
