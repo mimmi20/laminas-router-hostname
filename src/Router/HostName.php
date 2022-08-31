@@ -142,14 +142,7 @@ final class HostName implements RouteInterface
         $this->port = $uri->getPort();
         $this->host = $host;
 
-        return new RouteMatch(
-            array_merge(
-                $this->defaults,
-                [
-                    'host' => rawurldecode($host),
-                ],
-            ),
-        );
+        return new RouteMatch(array_merge($this->defaults, ['host' => rawurldecode($host)]));
     }
 
     /**
