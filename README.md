@@ -10,12 +10,16 @@
 [![Average time to resolve an issue](http://isitmaintained.com/badge/resolution/mimmi20/laminas-router-hostname.svg)](http://isitmaintained.com/project/mimmi20/laminas-router-hostname "Average time to resolve an issue")
 [![Percentage of issues still open](http://isitmaintained.com/badge/open/mimmi20/laminas-router-hostname.svg)](http://isitmaintained.com/project/mimmi20/laminas-router-hostname "Percentage of issues still open")
 
+## Requirements
+
+This library requires PHP 8.1+.
+
 ## Installation
 
 Run
 
-```
-$ composer require mimmi20/laminas-router-hostname
+```shell
+composer require mimmi20/laminas-router-hostname
 ```
 
 ## License

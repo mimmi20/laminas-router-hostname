@@ -26,48 +26,9 @@ jobs:
       matrix:
         operating-system:
           - "ubuntu-20.04"
+          - "ubuntu-22.04"
 
         php-version:
-          - "7.4"
-
-    steps:
-      - name: "Checkout"
-        uses: "actions/checkout@v3"
-        with:
-          # Disabling shallow clone is recommended for improving relevancy of reporting
-          fetch-depth: 0
-
-      - name: "Install PHP"
-        uses: "shivammathur/setup-php@2.18.1"
-        with:
-          php-version: "${{ matrix.php-version }}"
-          extensions: "${{ env.PHP_EXTENSIONS }}"
-          ini-values: "${{ env.PHP_INI_VALUES }}"
-          coverage: "none"
-          tools: "${{ env.TOOLS }}"
-
-      - name: "Validate composer.json"
-        run: "composer validate --strict"
-
-  lint:
-    name: "Linting"
-
-    needs: "validate"
-
-    runs-on: "${{ matrix.operating-system }}"
-
-    continue-on-error: false
-
-    strategy:
-      fail-fast: false
-
-      matrix:
-        operating-system:
-          - "ubuntu-20.04"
-
-        php-version:
-          - "7.4"
-          - "8.0"
           - "8.1"
 
     steps:
@@ -78,7 +39,7 @@ jobs:
           fetch-depth: 0
 
       - name: "Install PHP"
-        uses: "shivammathur/setup-php@2.18.1"
+        uses: "shivammathur/setup-php@2.21.2"
         with:
           php-version: "${{ matrix.php-version }}"
           extensions: "${{ env.PHP_EXTENSIONS }}"
@@ -86,13 +47,8 @@ jobs:
           coverage: "none"
           tools: "${{ env.TOOLS }}"
 
-      - name: "Lint PHP"
-        if: "${{ matrix.php-version == '7.4' }}"
-        uses: "overtrue/phplint@7.4"
-
-      - name: "Lint PHP"
-        if: "${{ matrix.php-version != '7.4' }}"
-        uses: "overtrue/phplint@8.0"
+      - name: "Validate composer.json"
+        run: "composer validate --strict"
 
   install:
     name: "Install dependencies"
@@ -108,12 +64,10 @@ jobs:
 
       matrix:
         operating-system:
-          - "ubuntu-18.04"
           - "ubuntu-20.04"
+          - "ubuntu-22.04"
 
         php-version:
-          - "7.4"
-          - "8.0"
           - "8.1"
 
         dependencies:
@@ -122,15 +76,30 @@ jobs:
 
         experimental: [false]
 
+        composer-options:
+          - ""
+
         include:
           - operating-system: "ubuntu-20.04"
             php-version: "8.2"
             dependencies: "highest"
             experimental: true
+            composer-options: " --ignore-platform-reqs"
           - operating-system: "ubuntu-20.04"
             php-version: "8.2"
             dependencies: "lowest"
             experimental: true
+            composer-options: " --ignore-platform-reqs"
+          - operating-system: "ubuntu-22.04"
+            php-version: "8.2"
+            dependencies: "highest"
+            experimental: true
+            composer-options: " --ignore-platform-reqs"
+          - operating-system: "ubuntu-22.04"
+            php-version: "8.2"
+            dependencies: "lowest"
+            experimental: true
+            composer-options: " --ignore-platform-reqs"
 
     steps:
       - name: "Checkout"
@@ -140,7 +109,55 @@ jobs:
           fetch-depth: 0
 
       - name: "Install PHP"
-        uses: "shivammathur/setup-php@2.18.1"
+        uses: "shivammathur/setup-php@2.21.2"
+        with:
+          php-version: "${{ matrix.php-version }}"
+          extensions: "${{ env.PHP_EXTENSIONS }}"
+          ini-values: "${{ env.PHP_INI_VALUES }}"
+          coverage: "none"
+          tools: "${{ env.TOOLS }}"
+
+      - name: "Update dependencies with composer"
+        uses: "ramsey/composer-install@v1"
+        with:
+          dependency-versions: "${{ matrix.dependencies }}"
+          composer-options: "${{ env.COMPOSER_OPTIONS }}${{ matrix.composer-options }}"
+
+      - name: "Check dependencies with composer"
+        run: "composer outdated --direct"
+
+  mega-lint:
+    name: "Linting with nvuillam/mega-linter"
+
+    needs: "install"
+
+    runs-on: "${{ matrix.operating-system }}"
+
+    continue-on-error: false
+
+    strategy:
+      fail-fast: false
+
+      matrix:
+        operating-system:
+          - "ubuntu-20.04"
+          - "ubuntu-22.04"
+
+        php-version:
+          - "8.1"
+
+        dependencies:
+          - "highest"
+
+    steps:
+      - name: "Checkout"
+        uses: "actions/checkout@v3"
+        with:
+          # Disabling shallow clone is recommended for improving relevancy of reporting
+          fetch-depth: 0
+
+      - name: "Install PHP"
+        uses: "shivammathur/setup-php@2.21.2"
         with:
           php-version: "${{ matrix.php-version }}"
           extensions: "${{ env.PHP_EXTENSIONS }}"
@@ -154,13 +171,17 @@ jobs:
           dependency-versions: "${{ matrix.dependencies }}"
           composer-options: "${{ env.COMPOSER_OPTIONS }}"
 
-      - name: "Check dependencies with composer"
-        run: "composer outdated --direct --strict"
+      - name: "Linter"
+        # You can override Mega-Linter flavor used to have faster performances
+        # More info at https://nvuillam.github.io/mega-linter/flavors/
+        uses: "nvuillam/mega-linter/flavors/php@v6.7.1"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-  php-cs-fixer:
-    name: "Check Coding Standards with PHP-CS-Fixer"
+  php-lint:
+    name: "Linting with overtrue/phplint"
 
-    needs: "lint"
+    needs: "install"
 
     runs-on: "${{ matrix.operating-system }}"
 
@@ -172,9 +193,51 @@ jobs:
       matrix:
         operating-system:
           - "ubuntu-20.04"
+          - "ubuntu-22.04"
 
         php-version:
-          - "7.4"
+          - "8.1"
+
+    steps:
+      - name: "Checkout"
+        uses: "actions/checkout@v3"
+        with:
+          # Disabling shallow clone is recommended for improving relevancy of reporting
+          fetch-depth: 0
+
+      - name: "Install PHP"
+        uses: "shivammathur/setup-php@2.21.2"
+        with:
+          php-version: "${{ matrix.php-version }}"
+          extensions: "${{ env.PHP_EXTENSIONS }}"
+          ini-values: "${{ env.PHP_INI_VALUES }}"
+          coverage: "none"
+          tools: "${{ env.TOOLS }}"
+
+      - name: "Lint PHP"
+        uses: "overtrue/phplint@8.1"
+
+  php-cs-fixer:
+    name: "Check Coding Standards with PHP-CS-Fixer"
+
+    needs:
+      - "mega-lint"
+      - "php-lint"
+
+    runs-on: "${{ matrix.operating-system }}"
+
+    continue-on-error: false
+
+    strategy:
+      fail-fast: false
+
+      matrix:
+        operating-system:
+          - "ubuntu-20.04"
+          - "ubuntu-22.04"
+
+        php-version:
+          - "8.1"
 
         dependencies:
           - "highest"
@@ -187,7 +250,7 @@ jobs:
           fetch-depth: 0
 
       - name: "Install PHP"
-        uses: "shivammathur/setup-php@2.18.1"
+        uses: "shivammathur/setup-php@2.21.2"
         with:
           php-version: "${{ matrix.php-version }}"
           extensions: "${{ env.PHP_EXTENSIONS }}"
@@ -207,7 +270,9 @@ jobs:
   phpcs:
     name: "Check Coding Standards with PHPCS"
 
-    needs: "lint"
+    needs:
+      - "mega-lint"
+      - "php-lint"
 
     runs-on: "${{ matrix.operating-system }}"
 
@@ -219,9 +284,10 @@ jobs:
       matrix:
         operating-system:
           - "ubuntu-20.04"
+          - "ubuntu-22.04"
 
         php-version:
-          - "7.4"
+          - "8.1"
 
         dependencies:
           - "highest"
@@ -234,7 +300,7 @@ jobs:
           fetch-depth: 0
 
       - name: "Install PHP"
-        uses: "shivammathur/setup-php@2.18.1"
+        uses: "shivammathur/setup-php@2.21.2"
         with:
           php-version: "${{ matrix.php-version }}"
           extensions: "${{ env.PHP_EXTENSIONS }}"
@@ -254,7 +320,9 @@ jobs:
   static-code-analysis:
     name: "Static Code Analysis with PHPStan"
 
-    needs: "lint"
+    needs:
+      - "mega-lint"
+      - "php-lint"
 
     runs-on: "${{ matrix.operating-system }}"
 
@@ -264,9 +332,10 @@ jobs:
       matrix:
         operating-system:
           - "ubuntu-20.04"
+          - "ubuntu-22.04"
 
         php-version:
-          - "7.4"
+          - "8.1"
 
         dependencies:
           - "highest"
@@ -279,7 +348,7 @@ jobs:
           fetch-depth: 0
 
       - name: "Install PHP"
-        uses: "shivammathur/setup-php@2.18.1"
+        uses: "shivammathur/setup-php@2.21.2"
         with:
           php-version: "${{ matrix.php-version }}"
           extensions: "${{ env.PHP_EXTENSIONS }}"
@@ -296,57 +365,12 @@ jobs:
       - name: "Run phpstan/phpstan"
         run: "vendor/bin/phpstan analyse -c phpstan.neon --memory-limit=768M --no-progress"
 
-  phpmd:
-    name: "Check Rules with PHPMD"
-
-    needs: "lint"
-
-    runs-on: "${{ matrix.operating-system }}"
-
-    continue-on-error: false
-
-    strategy:
-      fail-fast: false
-
-      matrix:
-        operating-system:
-          - "ubuntu-20.04"
-
-        php-version:
-          - "7.4"
-
-        dependencies:
-          - "highest"
-
-    steps:
-      - name: "Checkout"
-        uses: "actions/checkout@v3"
-        with:
-          # Disabling shallow clone is recommended for improving relevancy of reporting
-          fetch-depth: 0
-
-      - name: "Install PHP"
-        uses: "shivammathur/setup-php@2.18.1"
-        with:
-          php-version: "${{ matrix.php-version }}"
-          extensions: "${{ env.PHP_EXTENSIONS }}"
-          ini-values: "${{ env.PHP_INI_VALUES }}"
-          coverage: "none"
-          tools: "${{ env.TOOLS }}, phpmd"
-
-      - name: "Update dependencies with composer"
-        uses: "ramsey/composer-install@v1"
-        with:
-          dependency-versions: "${{ matrix.dependencies }}"
-          composer-options: "${{ env.COMPOSER_OPTIONS }}"
-
-      - name: "Run phpmd/phpmd"
-        run: "phpmd src github phpmd.ruleset.xml"
-
   tests:
     name: "UnitTests with PHPUnit"
 
-    needs: "lint"
+    needs:
+      - "mega-lint"
+      - "php-lint"
 
     runs-on: "${{ matrix.operating-system }}"
 
@@ -357,12 +381,10 @@ jobs:
 
       matrix:
         operating-system:
-          - "ubuntu-18.04"
           - "ubuntu-20.04"
+          - "ubuntu-22.04"
 
         php-version:
-          - "7.4"
-          - "8.0"
           - "8.1"
 
         dependencies:
@@ -377,7 +399,7 @@ jobs:
           fetch-depth: 0
 
       - name: "Install PHP"
-        uses: "shivammathur/setup-php@2.18.1"
+        uses: "shivammathur/setup-php@2.21.2"
         with:
           php-version: "${{ matrix.php-version }}"
           extensions: "${{ env.PHP_EXTENSIONS }}"
@@ -392,7 +414,7 @@ jobs:
           composer-options: "${{ env.COMPOSER_OPTIONS }}"
 
       - name: "Run unit tests with phpunit/phpunit"
-        run: "vendor/bin/phpunit -c phpunit.xml --verbose --no-coverage"
+        run: "vendor/bin/phpunit -c phpunit.xml --no-coverage"
 
   code-coverage:
     name: "Code Coverage with PHPUnit"
@@ -408,12 +430,10 @@ jobs:
 
       matrix:
         operating-system:
-          - "ubuntu-18.04"
           - "ubuntu-20.04"
+          - "ubuntu-22.04"
 
         php-version:
-          - "7.4"
-          - "8.0"
           - "8.1"
 
         dependencies:
@@ -431,13 +451,13 @@ jobs:
           fetch-depth: 0
 
       - name: "Install PHP"
-        uses: "shivammathur/setup-php@2.18.1"
+        uses: "shivammathur/setup-php@2.21.2"
         with:
           php-version: "${{ matrix.php-version }}"
           extensions: "${{ env.PHP_EXTENSIONS }}"
           ini-values: "${{ env.PHP_INI_VALUES }}"
           coverage: "${{ matrix.coverage-drivers }}"
-          tools: "${{ env.TOOLS }}, infection:0.26.6"
+          tools: "${{ env.TOOLS }}, infection"
 
       - name: "Update dependencies with composer"
         uses: "ramsey/composer-install@v1"
@@ -459,4 +479,4 @@ jobs:
           verbose: false
 
       - name: "Run mutation tests with infection/infection"
-        run: "infection -s --min-covered-msi=100 --min-msi=100 --coverage=.build/coverage --logger-github"
+        run: "infection -s --min-covered-msi=100 --min-msi=93 --coverage=.build/coverage --logger-github"

@@ -22,16 +22,16 @@ use function is_array;
 final class HostNameFactory implements FactoryInterface
 {
     /**
-     * @param string                                  $requestedName
-     * @param array<string, array<mixed>|string>|null $options
-     * @phpstan-param array{host?: string, defaults?: array<mixed>} $options
+     * @param string                                                $requestedName
+     * @param array<string, (string|array<int|string, mixed>)>|null $options
+     * @phpstan-param array{host?: string, hosts?: array<int|string, string>, defaults?: array<int|string, mixed>}|null $options
      *
      * @throws ServiceNotCreatedException if an exception is raised when creating a service
      *
      * @phpcsSuppress SlevomatCodingStandard.Functions.UnusedParameter.UnusedParameter
      * @phpcsSuppress SlevomatCodingStandard.TypeHints.ParameterTypeHint.MissingNativeTypeHint
      */
-    public function __invoke(ContainerInterface $container, $requestedName, ?array $options = null): HostName
+    public function __invoke(ContainerInterface $container, $requestedName, array | null $options = null): HostName
     {
         if (!is_array($options)) {
             throw new ServiceNotCreatedException('Options must be an Array');
