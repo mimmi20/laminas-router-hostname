@@ -34,9 +34,7 @@ final class HostNameFactoryTest extends TestCase
         $this->object = new HostNameFactory();
     }
 
-    /**
-     * @throws ServiceNotCreatedException
-     */
+    /** @throws ServiceNotCreatedException */
     public function testInvokeWithoutOptions(): void
     {
         $container = $this->getMockBuilder(ContainerInterface::class)->getMock();
@@ -49,9 +47,7 @@ final class HostNameFactoryTest extends TestCase
         $this->object->__invoke($container, 'test');
     }
 
-    /**
-     * @throws ServiceNotCreatedException
-     */
+    /** @throws ServiceNotCreatedException */
     public function testInvokeFailed(): void
     {
         $container = $this->getMockBuilder(ContainerInterface::class)->getMock();

@@ -39,10 +39,6 @@ final class ConfigProvider
      */
     public function getRouteManagerConfig(): array
     {
-        return [
-            'factories' => [
-                HostName::class => HostNameFactory::class,
-            ],
-        ];
+        return ['factories' => [HostName::class => HostNameFactory::class]];
     }
 }

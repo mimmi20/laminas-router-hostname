@@ -174,7 +174,7 @@ jobs:
       - name: "Linter"
         # You can override Mega-Linter flavor used to have faster performances
         # More info at https://nvuillam.github.io/mega-linter/flavors/
-        uses: "nvuillam/mega-linter/flavors/php@v6.6.0"
+        uses: "nvuillam/mega-linter/flavors/php@v6.7.1"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
@@ -479,4 +479,4 @@ jobs:
           verbose: false
 
       - name: "Run mutation tests with infection/infection"
-        run: "infection -s --min-covered-msi=100 --min-msi=93 --coverage=.build/coverage --logger-github"
+        run: "infection -s --min-covered-msi=100 --min-msi=100 --coverage=.build/coverage --logger-github"
