@@ -34,6 +34,7 @@ use function mb_strtolower;
 use function method_exists;
 use function rawurldecode;
 use function rawurlencode;
+use function sprintf;
 
 /**
  * route for Hostnames
@@ -41,15 +42,7 @@ use function rawurlencode;
 final class HostName implements RouteInterface
 {
     private string | null $host = null;
-
-    private int | null $port = null;
-
-    /**
-     * Default values.
-     *
-     * @var array<mixed>
-     */
-    private array $defaults;
+    private int | null $port    = null;
 
     /**
      * List of assembled parameters.
@@ -63,10 +56,14 @@ final class HostName implements RouteInterface
      *
      * @param array<string>            $hosts
      * @param array<int|string, mixed> $defaults
+     *
+     * @throws void
      */
-    public function __construct(private array $hosts = [], array $defaults = [])
-    {
-        $this->defaults = $defaults;
+    public function __construct(
+        private readonly array $hosts = [],
+        private readonly array $defaults = [],
+    ) {
+        // nothing to do here
     }
 
     /**
@@ -78,12 +75,15 @@ final class HostName implements RouteInterface
      * @phpstan-param array{host?: string, hosts?: array<int|string, string>, defaults?: array<int|string, mixed>}|Traversable<string, mixed>|bool $options
      *
      * @throws InvalidArgumentException
-     * @throws \Laminas\Stdlib\Exception\InvalidArgumentException
      */
     public static function factory($options = []): self
     {
         if ($options instanceof Traversable) {
-            $options = ArrayUtils::iteratorToArray($options);
+            try {
+                $options = ArrayUtils::iteratorToArray($options);
+            } catch (\Laminas\Stdlib\Exception\InvalidArgumentException $e) {
+                throw new InvalidArgumentException('Options must be an instance of Traversable', 0, $e);
+            }
         }
 
         if (!is_array($options)) {
@@ -123,6 +123,8 @@ final class HostName implements RouteInterface
 
     /**
      * match(): defined by RouteInterface interface.
+     *
+     * @throws void
      */
     public function match(Request $request): RouteMatch | null
     {
@@ -154,7 +156,7 @@ final class HostName implements RouteInterface
      * @param array<string, bool|Http> $options
      * @phpstan-param array{uri?: bool|Http} $options
      *
-     * @throws InvalidUriPartException
+     * @throws InvalidArgumentException
      *
      * @phpcsSuppress SlevomatCodingStandard.Functions.UnusedParameter.UnusedParameter
      */
@@ -164,7 +166,15 @@ final class HostName implements RouteInterface
 
         if (array_key_exists('uri', $options) && $options['uri'] instanceof Http) {
             if (null !== $this->host) {
-                $options['uri']->setHost(rawurlencode($this->host));
+                try {
+                    $options['uri']->setHost(rawurlencode($this->host));
+                } catch (InvalidUriPartException $e) {
+                    throw new InvalidArgumentException(
+                        sprintf('Could not set host %s', $this->host),
+                        0,
+                        $e,
+                    );
+                }
 
                 $this->assembledParams[] = 'host';
             } elseif (1 === count($this->hosts)) {
@@ -172,7 +182,15 @@ final class HostName implements RouteInterface
                 $host       = $this->hosts[$keys[0]];
                 $this->host = $host;
 
-                $options['uri']->setHost(rawurlencode($this->host));
+                try {
+                    $options['uri']->setHost(rawurlencode($this->host));
+                } catch (InvalidUriPartException $e) {
+                    throw new InvalidArgumentException(
+                        sprintf('Could not set host %s', $this->host),
+                        0,
+                        $e,
+                    );
+                }
 
                 $this->assembledParams[] = 'host';
             }
@@ -193,6 +211,8 @@ final class HostName implements RouteInterface
      * @see    RouteInterface::getAssembledParams
      *
      * @return array<int, string>
+     *
+     * @throws void
      */
     public function getAssembledParams(): array
     {
