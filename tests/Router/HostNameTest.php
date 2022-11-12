@@ -538,7 +538,7 @@ final class HostNameTest extends TestCase
             ->method('setPort');
 
         try {
-            $url = $hostname->assemble([], ['uri' => $uri]);
+            $hostname->assemble([], ['uri' => $uri]);
             self::fail('InvalidArgumentException expected');
         } catch (InvalidArgumentException $e) {
             self::assertSame(0, $e->getCode());
@@ -590,6 +590,57 @@ final class HostNameTest extends TestCase
 
         self::assertSame('', $url);
         self::assertSame(['host'], $hostname->getAssembledParams());
+    }
+
+    /**
+     * @throws Exception
+     * @throws \SebastianBergmann\RecursionContext\InvalidArgumentException
+     * @throws InvalidArgumentException
+     * @throws ReflectionException
+     */
+    public function testAssembleWithUriAndSingleHost2(): void
+    {
+        $host     = 'abc.test';
+        $defaults = ['edf' => 'xyz'];
+        $hostname = HostName::factory(new ArrayObject(['hosts' => [$host], 'defaults' => $defaults]));
+        $exception = new InvalidUriPartException('abc');
+
+        self::assertInstanceOf(HostName::class, $hostname);
+
+        $hostsP = new ReflectionProperty($hostname, 'hosts');
+
+        self::assertSame([$host], $hostsP->getValue($hostname));
+
+        $hostP = new ReflectionProperty($hostname, 'host');
+
+        self::assertNull($hostP->getValue($hostname));
+
+        $defaultsP = new ReflectionProperty($hostname, 'defaults');
+
+        self::assertSame($defaults, $defaultsP->getValue($hostname));
+
+        $portP = new ReflectionProperty($hostname, 'port');
+
+        self::assertNull($portP->getValue($hostname));
+
+        $uri = $this->getMockBuilder(Http::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $uri->expects(self::once())
+            ->method('setHost')
+            ->with($host)
+            ->willThrowException($exception);
+        $uri->expects(self::never())
+            ->method('setPort');
+
+        try {
+            $hostname->assemble([], ['uri' => $uri]);
+            self::fail('InvalidArgumentException expected');
+        } catch (InvalidArgumentException $e) {
+            self::assertSame(0, $e->getCode());
+            self::assertSame(sprintf('Could not set host %s', $host), $e->getMessage());
+            self::assertSame($exception, $e->getPrevious());
+        }
     }
 
     /**
@@ -734,6 +785,83 @@ final class HostNameTest extends TestCase
 
         self::assertSame('', $url);
         self::assertSame(['host', 'port'], $hostname->getAssembledParams());
+    }
+
+    /**
+     * @throws Exception
+     * @throws \SebastianBergmann\RecursionContext\InvalidArgumentException
+     * @throws InvalidArgumentException
+     * @throws ReflectionException
+     */
+    public function testAssembleWithUriAfterMatch3(): void
+    {
+        $host     = 'abc.test';
+        $port     = 80;
+        $defaults = ['edf' => 'xyz'];
+        $hostname = HostName::factory(new ArrayObject(['host' => mb_strtoupper($host), 'defaults' => $defaults]));
+        $exception = new InvalidUriPartException('abc');
+
+        self::assertInstanceOf(HostName::class, $hostname);
+
+        $hostsP = new ReflectionProperty($hostname, 'hosts');
+
+        self::assertSame([mb_strtoupper($host)], $hostsP->getValue($hostname));
+
+        $hostP = new ReflectionProperty($hostname, 'host');
+
+        self::assertNull($hostP->getValue($hostname));
+
+        $defaultsP = new ReflectionProperty($hostname, 'defaults');
+
+        self::assertSame($defaults, $defaultsP->getValue($hostname));
+
+        $portP = new ReflectionProperty($hostname, 'port');
+
+        self::assertNull($portP->getValue($hostname));
+
+        $uri1 = $this->getMockBuilder(Http::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $uri1->expects(self::once())
+            ->method('getHost')
+            ->willReturn($host);
+        $uri1->expects(self::once())
+            ->method('getPort')
+            ->willReturn($port);
+
+        $uri2 = $this->getMockBuilder(Http::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $uri2->expects(self::once())
+            ->method('setHost')
+            ->with($host)
+            ->willThrowException($exception);
+        $uri2->expects(self::never())
+            ->method('setPort');
+
+        $request = $this->getMockBuilder(\Laminas\Http\Request::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $request->expects(self::once())
+            ->method('getUri')
+            ->willReturn($uri1);
+
+        $match = $hostname->match($request);
+
+        self::assertInstanceOf(RouteMatch::class, $match);
+
+        $portP = new ReflectionProperty($hostname, 'port');
+
+        self::assertSame($port, $portP->getValue($hostname));
+
+        try {
+            $hostname->assemble([], ['uri' => $uri2]);
+            self::fail('InvalidArgumentException expected');
+        } catch (InvalidArgumentException $e) {
+            self::assertSame(0, $e->getCode());
+            self::assertSame(sprintf('Could not set host %s', $host), $e->getMessage());
+            self::assertSame($exception, $e->getPrevious());
+        }
     }
 
     /**
