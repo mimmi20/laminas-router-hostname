@@ -17,6 +17,7 @@ use AssertionError;
 use Laminas\Router\Exception\InvalidArgumentException;
 use Laminas\Router\Http\RouteMatch;
 use Laminas\Stdlib\Request;
+use Laminas\Uri\Exception\InvalidUriPartException;
 use Laminas\Uri\Http;
 use Mimmi20\Routing\Router\HostName;
 use PHPUnit\Framework\Exception;
@@ -26,6 +27,7 @@ use ReflectionProperty;
 
 use function mb_strtoupper;
 use function rawurldecode;
+use function sprintf;
 
 final class HostNameTest extends TestCase
 {
@@ -492,6 +494,57 @@ final class HostNameTest extends TestCase
 
         self::assertSame('', $url);
         self::assertSame(['host'], $hostname->getAssembledParams());
+    }
+
+    /**
+     * @throws Exception
+     * @throws \SebastianBergmann\RecursionContext\InvalidArgumentException
+     * @throws InvalidArgumentException
+     * @throws ReflectionException
+     */
+    public function testAssembleWithUriAndOneHost2(): void
+    {
+        $host      = 'abc.test';
+        $defaults  = ['edf' => 'xyz'];
+        $hostname  = HostName::factory(new ArrayObject(['host' => $host, 'defaults' => $defaults]));
+        $exception = new InvalidUriPartException('abc');
+
+        self::assertInstanceOf(HostName::class, $hostname);
+
+        $hostsP = new ReflectionProperty($hostname, 'hosts');
+
+        self::assertSame([$host], $hostsP->getValue($hostname));
+
+        $hostP = new ReflectionProperty($hostname, 'host');
+
+        self::assertNull($hostP->getValue($hostname));
+
+        $defaultsP = new ReflectionProperty($hostname, 'defaults');
+
+        self::assertSame($defaults, $defaultsP->getValue($hostname));
+
+        $portP = new ReflectionProperty($hostname, 'port');
+
+        self::assertNull($portP->getValue($hostname));
+
+        $uri = $this->getMockBuilder(Http::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $uri->expects(self::once())
+            ->method('setHost')
+            ->with($host)
+            ->willThrowException($exception);
+        $uri->expects(self::never())
+            ->method('setPort');
+
+        try {
+            $url = $hostname->assemble([], ['uri' => $uri]);
+            self::fail('InvalidArgumentException expected');
+        } catch (InvalidArgumentException $e) {
+            self::assertSame(0, $e->getCode());
+            self::assertSame(sprintf('Could not set host %s', $host), $e->getMessage());
+            self::assertSame($exception, $e->getPrevious());
+        }
     }
 
     /**
