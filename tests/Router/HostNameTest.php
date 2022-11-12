@@ -600,9 +600,9 @@ final class HostNameTest extends TestCase
      */
     public function testAssembleWithUriAndSingleHost2(): void
     {
-        $host     = 'abc.test';
-        $defaults = ['edf' => 'xyz'];
-        $hostname = HostName::factory(new ArrayObject(['hosts' => [$host], 'defaults' => $defaults]));
+        $host      = 'abc.test';
+        $defaults  = ['edf' => 'xyz'];
+        $hostname  = HostName::factory(new ArrayObject(['hosts' => [$host], 'defaults' => $defaults]));
         $exception = new InvalidUriPartException('abc');
 
         self::assertInstanceOf(HostName::class, $hostname);
@@ -795,10 +795,10 @@ final class HostNameTest extends TestCase
      */
     public function testAssembleWithUriAfterMatch3(): void
     {
-        $host     = 'abc.test';
-        $port     = 80;
-        $defaults = ['edf' => 'xyz'];
-        $hostname = HostName::factory(new ArrayObject(['host' => mb_strtoupper($host), 'defaults' => $defaults]));
+        $host      = 'abc.test';
+        $port      = 80;
+        $defaults  = ['edf' => 'xyz'];
+        $hostname  = HostName::factory(new ArrayObject(['host' => mb_strtoupper($host), 'defaults' => $defaults]));
         $exception = new InvalidUriPartException('abc');
 
         self::assertInstanceOf(HostName::class, $hostname);
