@@ -39,7 +39,7 @@ final class HostNameFactory implements FactoryInterface
 
         try {
             return HostName::factory($options);
-        } catch (InvalidArgumentException | \Laminas\Stdlib\Exception\InvalidArgumentException $e) {
+        } catch (InvalidArgumentException $e) {
             throw new ServiceNotCreatedException('an error occured while creating this router', 0, $e);
         }
     }
