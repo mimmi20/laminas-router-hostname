@@ -79,11 +79,8 @@ final class HostName implements RouteInterface
     public static function factory($options = []): self
     {
         if ($options instanceof Traversable) {
-            try {
-                $options = ArrayUtils::iteratorToArray($options);
-            } catch (\Laminas\Stdlib\Exception\InvalidArgumentException $e) {
-                throw new InvalidArgumentException('Options must be an instance of Traversable', 0, $e);
-            }
+            /** @phpstan-ignore-next-line */
+            $options = ArrayUtils::iteratorToArray($options);
         }
 
         if (!is_array($options)) {
