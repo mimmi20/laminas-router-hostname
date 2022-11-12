@@ -166,11 +166,7 @@ final class HostName implements RouteInterface
                 try {
                     $options['uri']->setHost(rawurlencode($this->host));
                 } catch (InvalidUriPartException $e) {
-                    throw new InvalidArgumentException(
-                        sprintf('Could not set host %s', $this->host),
-                        0,
-                        $e,
-                    );
+                    throw new InvalidArgumentException(sprintf('Could not set host %s', $this->host), 0, $e);
                 }
 
                 $this->assembledParams[] = 'host';
@@ -182,11 +178,7 @@ final class HostName implements RouteInterface
                 try {
                     $options['uri']->setHost(rawurlencode($this->host));
                 } catch (InvalidUriPartException $e) {
-                    throw new InvalidArgumentException(
-                        sprintf('Could not set host %s', $this->host),
-                        0,
-                        $e,
-                    );
+                    throw new InvalidArgumentException(sprintf('Could not set host %s', $this->host), 0, $e);
                 }
 
                 $this->assembledParams[] = 'host';
