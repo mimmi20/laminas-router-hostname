@@ -23,3 +23,4 @@ parameters:
       tooWideThrowType: true
   ignoreErrors:
     - '~Parameter #1 \$options of static method Mimmi20\\Routing\\Router\\HostName::factory\(\) expects array{host\?: string, hosts\?: array<int\|string, string>, defaults\?: array<int\|string, mixed>}\|bool\|Traversable<string, mixed>, ~'
+    - '~is not subtype of Throwable~'
