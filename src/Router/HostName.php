@@ -2,7 +2,7 @@
 /**
  * This file is part of the mimmi20/laminas-router-hostname package.
  *
- * Copyright (c) 2021, Thomas Mueller <mimmi20@live.de>
+ * Copyright (c) 2021-2023, Thomas Mueller <mimmi20@live.de>
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -54,8 +54,8 @@ final class HostName implements RouteInterface
     /**
      * Create a new hostname route.
      *
-     * @param array<string>            $hosts
-     * @param array<int|string, mixed> $defaults
+     * @param array<int|string, string> $hosts
+     * @param array<int|string, mixed>  $defaults
      *
      * @throws void
      */

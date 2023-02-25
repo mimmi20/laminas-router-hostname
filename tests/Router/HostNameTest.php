@@ -2,7 +2,7 @@
 /**
  * This file is part of the mimmi20/laminas-router-hostname package.
  *
- * Copyright (c) 2021, Thomas Mueller <mimmi20@live.de>
+ * Copyright (c) 2021-2023, Thomas Mueller <mimmi20@live.de>
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -63,7 +63,6 @@ final class HostNameTest extends TestCase
 
     /**
      * @throws Exception
-     * @throws \SebastianBergmann\RecursionContext\InvalidArgumentException
      * @throws InvalidArgumentException
      * @throws ReflectionException
      */
@@ -103,7 +102,6 @@ final class HostNameTest extends TestCase
 
     /**
      * @throws Exception
-     * @throws \SebastianBergmann\RecursionContext\InvalidArgumentException
      * @throws InvalidArgumentException
      * @throws ReflectionException
      */
@@ -134,7 +132,6 @@ final class HostNameTest extends TestCase
 
     /**
      * @throws Exception
-     * @throws \SebastianBergmann\RecursionContext\InvalidArgumentException
      * @throws InvalidArgumentException
      * @throws ReflectionException
      */
@@ -164,7 +161,6 @@ final class HostNameTest extends TestCase
 
     /**
      * @throws Exception
-     * @throws \SebastianBergmann\RecursionContext\InvalidArgumentException
      * @throws InvalidArgumentException
      * @throws ReflectionException
      */
@@ -205,7 +201,6 @@ final class HostNameTest extends TestCase
 
     /**
      * @throws Exception
-     * @throws \SebastianBergmann\RecursionContext\InvalidArgumentException
      * @throws InvalidArgumentException
      * @throws ReflectionException
      */
@@ -236,7 +231,6 @@ final class HostNameTest extends TestCase
 
     /**
      * @throws Exception
-     * @throws \SebastianBergmann\RecursionContext\InvalidArgumentException
      * @throws InvalidArgumentException
      * @throws ReflectionException
      */
@@ -267,7 +261,6 @@ final class HostNameTest extends TestCase
 
     /**
      * @throws Exception
-     * @throws \SebastianBergmann\RecursionContext\InvalidArgumentException
      * @throws InvalidArgumentException
      * @throws ReflectionException
      */
@@ -306,7 +299,6 @@ final class HostNameTest extends TestCase
 
     /**
      * @throws Exception
-     * @throws \SebastianBergmann\RecursionContext\InvalidArgumentException
      * @throws InvalidArgumentException
      * @throws ReflectionException
      */
@@ -357,7 +349,6 @@ final class HostNameTest extends TestCase
 
     /**
      * @throws Exception
-     * @throws \SebastianBergmann\RecursionContext\InvalidArgumentException
      * @throws InvalidArgumentException
      * @throws ReflectionException
      */
@@ -417,7 +408,6 @@ final class HostNameTest extends TestCase
 
     /**
      * @throws Exception
-     * @throws \SebastianBergmann\RecursionContext\InvalidArgumentException
      * @throws InvalidArgumentException
      * @throws ReflectionException
      */
@@ -453,7 +443,6 @@ final class HostNameTest extends TestCase
 
     /**
      * @throws Exception
-     * @throws \SebastianBergmann\RecursionContext\InvalidArgumentException
      * @throws InvalidArgumentException
      * @throws ReflectionException
      */
@@ -498,7 +487,6 @@ final class HostNameTest extends TestCase
 
     /**
      * @throws Exception
-     * @throws \SebastianBergmann\RecursionContext\InvalidArgumentException
      * @throws InvalidArgumentException
      * @throws ReflectionException
      */
@@ -549,7 +537,6 @@ final class HostNameTest extends TestCase
 
     /**
      * @throws Exception
-     * @throws \SebastianBergmann\RecursionContext\InvalidArgumentException
      * @throws InvalidArgumentException
      * @throws ReflectionException
      */
@@ -594,7 +581,6 @@ final class HostNameTest extends TestCase
 
     /**
      * @throws Exception
-     * @throws \SebastianBergmann\RecursionContext\InvalidArgumentException
      * @throws InvalidArgumentException
      * @throws ReflectionException
      */
@@ -645,7 +631,6 @@ final class HostNameTest extends TestCase
 
     /**
      * @throws Exception
-     * @throws \SebastianBergmann\RecursionContext\InvalidArgumentException
      * @throws InvalidArgumentException
      * @throws ReflectionException
      */
@@ -717,7 +702,6 @@ final class HostNameTest extends TestCase
 
     /**
      * @throws Exception
-     * @throws \SebastianBergmann\RecursionContext\InvalidArgumentException
      * @throws InvalidArgumentException
      * @throws ReflectionException
      */
@@ -789,7 +773,6 @@ final class HostNameTest extends TestCase
 
     /**
      * @throws Exception
-     * @throws \SebastianBergmann\RecursionContext\InvalidArgumentException
      * @throws InvalidArgumentException
      * @throws ReflectionException
      */
@@ -866,14 +849,12 @@ final class HostNameTest extends TestCase
 
     /**
      * @throws Exception
-     * @throws \SebastianBergmann\RecursionContext\InvalidArgumentException
      * @throws InvalidArgumentException
      * @throws ReflectionException
      */
     public function testAssembleWithoutUri2(): void
     {
         $host     = 'abc.test';
-        $port     = 80;
         $defaults = ['edf' => 'xyz'];
         $hostname = HostName::factory(new ArrayObject(['host' => mb_strtoupper($host), 'defaults' => $defaults]));
 
@@ -911,7 +892,6 @@ final class HostNameTest extends TestCase
 
     /**
      * @throws Exception
-     * @throws \SebastianBergmann\RecursionContext\InvalidArgumentException
      * @throws InvalidArgumentException
      * @throws ReflectionException
      */
