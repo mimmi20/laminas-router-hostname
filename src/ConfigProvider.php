@@ -2,7 +2,7 @@
 /**
  * This file is part of the mimmi20/laminas-router-hostname package.
  *
- * Copyright (c) 2021, Thomas Mueller <mimmi20@live.de>
+ * Copyright (c) 2021-2023, Thomas Mueller <mimmi20@live.de>
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -22,6 +22,8 @@ final class ConfigProvider
      *
      * @return array<string, array<string, array<string, string>>>
      * @phpstan-return array{route_manager: array{factories: array<class-string, class-string>}, router: array{routes: array<mixed>}}
+     *
+     * @throws void
      */
     public function __invoke(): array
     {
@@ -36,6 +38,8 @@ final class ConfigProvider
      *
      * @return array<string, array<string, string>>
      * @phpstan-return array{factories: array<class-string, class-string>}
+     *
+     * @throws void
      */
     public function getRouteManagerConfig(): array
     {
