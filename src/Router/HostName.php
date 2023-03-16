@@ -172,8 +172,7 @@ final class HostName implements RouteInterface
                 $this->assembledParams[] = 'host';
             } elseif (1 === count($this->hosts)) {
                 $keys       = array_keys($this->hosts);
-                $host       = $this->hosts[$keys[0]];
-                $this->host = $host;
+                $this->host = $this->hosts[$keys[0]];
 
                 try {
                     $options['uri']->setHost(rawurlencode($this->host));
