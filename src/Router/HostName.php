@@ -59,10 +59,8 @@ final class HostName implements RouteInterface
      *
      * @throws void
      */
-    public function __construct(
-        private readonly array $hosts = [],
-        private readonly array $defaults = [],
-    ) {
+    public function __construct(private readonly array $hosts = [], private readonly array $defaults = [])
+    {
         // nothing to do here
     }
 
