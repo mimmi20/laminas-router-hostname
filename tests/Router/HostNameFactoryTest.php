@@ -31,7 +31,7 @@ final class HostNameFactoryTest extends TestCase
         $this->object = new HostNameFactory();
     }
 
-    /** @throws ServiceNotCreatedException */
+    /** @throws void */
     public function testInvokeWithoutOptions(): void
     {
         $container = $this->getMockBuilder(ContainerInterface::class)->getMock();
@@ -41,10 +41,10 @@ final class HostNameFactoryTest extends TestCase
         $this->expectExceptionCode(0);
         $this->expectExceptionMessage('Options must be an Array');
 
-        $this->object->__invoke($container, 'test');
+        ($this->object)($container, 'test');
     }
 
-    /** @throws ServiceNotCreatedException */
+    /** @throws void */
     public function testInvokeFailed(): void
     {
         $container = $this->getMockBuilder(ContainerInterface::class)->getMock();
@@ -54,18 +54,18 @@ final class HostNameFactoryTest extends TestCase
         $this->expectExceptionCode(0);
         $this->expectExceptionMessage('an error occured while creating this router');
 
-        $this->object->__invoke($container, 'test', []);
+        ($this->object)($container, 'test', []);
     }
 
-    /**
-     * @throws Exception
-     * @throws ServiceNotCreatedException
-     */
+    /** @throws Exception */
     public function testInvoke(): void
     {
         $container = $this->getMockBuilder(ContainerInterface::class)->getMock();
         assert($container instanceof ContainerInterface);
 
-        self::assertInstanceOf(HostName::class, $this->object->__invoke($container, 'test', ['host' => 'abc.test']));
+        self::assertInstanceOf(
+            HostName::class,
+            ($this->object)($container, 'test', ['host' => 'abc.test']),
+        );
     }
 }
