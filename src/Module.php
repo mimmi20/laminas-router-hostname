@@ -28,8 +28,8 @@ final class Module implements ConfigProviderInterface, DependencyIndicatorInterf
         $provider = new ConfigProvider();
 
         return [
-            'route_manager' => $provider->getRouteManagerConfig(),
             'router' => ['routes' => []],
+            'route_manager' => $provider->getRouteManagerConfig(),
         ];
     }
 

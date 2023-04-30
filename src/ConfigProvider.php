@@ -28,8 +28,8 @@ final class ConfigProvider
     public function __invoke(): array
     {
         return [
-            'route_manager' => $this->getRouteManagerConfig(),
             'router' => ['routes' => []],
+            'route_manager' => $this->getRouteManagerConfig(),
         ];
     }
 

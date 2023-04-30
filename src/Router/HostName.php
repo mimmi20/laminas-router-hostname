@@ -73,6 +73,8 @@ final class HostName implements RouteInterface
      * @phpstan-param array{host?: string, hosts?: array<int|string, string>, defaults?: array<int|string, mixed>}|Traversable<string, mixed>|bool $options
      *
      * @throws InvalidArgumentException
+     *
+     * @phpcsSuppress SlevomatCodingStandard.TypeHints.ParameterTypeHint.MissingNativeTypeHint
      */
     public static function factory($options = []): self
     {
@@ -105,7 +107,9 @@ final class HostName implements RouteInterface
 
         if (array_key_exists('defaults', $options)) {
             if (!is_array($options['defaults'])) {
-                throw new InvalidArgumentException('the optional config key "defaults" must be an array, if available');
+                throw new InvalidArgumentException(
+                    'the optional config key "defaults" must be an array, if available',
+                );
             }
 
             $defaults = $options['defaults'];
@@ -132,7 +136,10 @@ final class HostName implements RouteInterface
 
         $host = $uri->getHost();
 
-        if (null === $host || !in_array(mb_strtolower($host), array_map('strtolower', $this->hosts), true)) {
+        if (
+            $host === null
+            || !in_array(mb_strtolower($host), array_map('strtolower', $this->hosts), true)
+        ) {
             return null;
         }
 
@@ -160,28 +167,36 @@ final class HostName implements RouteInterface
         $this->assembledParams = [];
 
         if (array_key_exists('uri', $options) && $options['uri'] instanceof Http) {
-            if (null !== $this->host) {
+            if ($this->host !== null) {
                 try {
                     $options['uri']->setHost(rawurlencode($this->host));
                 } catch (InvalidUriPartException $e) {
-                    throw new InvalidArgumentException(sprintf('Could not set host %s', $this->host), 0, $e);
+                    throw new InvalidArgumentException(
+                        sprintf('Could not set host %s', $this->host),
+                        0,
+                        $e,
+                    );
                 }
 
                 $this->assembledParams[] = 'host';
-            } elseif (1 === count($this->hosts)) {
+            } elseif (count($this->hosts) === 1) {
                 $keys       = array_keys($this->hosts);
                 $this->host = $this->hosts[$keys[0]];
 
                 try {
                     $options['uri']->setHost(rawurlencode($this->host));
                 } catch (InvalidUriPartException $e) {
-                    throw new InvalidArgumentException(sprintf('Could not set host %s', $this->host), 0, $e);
+                    throw new InvalidArgumentException(
+                        sprintf('Could not set host %s', $this->host),
+                        0,
+                        $e,
+                    );
                 }
 
                 $this->assembledParams[] = 'host';
             }
 
-            if (null !== $this->port) {
+            if ($this->port !== null) {
                 $options['uri']->setPort($this->port);
                 $this->assembledParams[] = 'port';
             }
