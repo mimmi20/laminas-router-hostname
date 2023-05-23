@@ -69,7 +69,7 @@ final class HostName implements RouteInterface
      *
      * @see    \Laminas\Router\RouteInterface::factory()
      *
-     * @param array<string, (string|array<int|string, mixed>)>|Traversable<string, mixed>|bool $options
+     * @param array<string, (array<int|string, mixed>|string)>|bool|Traversable<string, mixed> $options
      * @phpstan-param array{host?: string, hosts?: array<int|string, string>, defaults?: array<int|string, mixed>}|Traversable<string, mixed>|bool $options
      *
      * @throws InvalidArgumentException
