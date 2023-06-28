@@ -17,15 +17,16 @@ updates:
       - "mimmi20"
     labels:
       - "dependencies"
+      - "patch"
     versioning-strategy: "increase"
     target-branch: "master"
     commit-message:
       include: "scope"
       prefix: "composer"
-    ignore:
-      - dependency-name: "laminas/laminas-dependency-plugin"
-        versions:
-          - ">= 2.2"
+#    ignore:
+#      - dependency-name: "laminas/laminas-dependency-plugin"
+#        versions:
+#          - ">= 2.2"
 #      - dependency-name: phpunit/phpunit
 #        versions:
 #          - ">= 0"
@@ -44,7 +45,7 @@ updates:
       - "mimmi20"
     labels:
       - "dependencies"
+      - "patch"
     target-branch: "master"
     commit-message:
-      include: "scope"
       prefix: "github-actions"
