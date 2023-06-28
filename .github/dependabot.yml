@@ -48,5 +48,4 @@ updates:
       - "patch"
     target-branch: "master"
     commit-message:
-      include: "scope"
       prefix: "github-actions"
