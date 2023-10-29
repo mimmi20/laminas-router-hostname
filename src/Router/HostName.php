@@ -24,7 +24,6 @@ use Traversable;
 use function array_key_exists;
 use function array_keys;
 use function array_map;
-use function array_merge;
 use function assert;
 use function count;
 use function in_array;
@@ -146,7 +145,7 @@ final class HostName implements RouteInterface
         $this->port = $uri->getPort();
         $this->host = $host;
 
-        return new RouteMatch(array_merge($this->defaults, ['host' => rawurldecode($host)]));
+        return new RouteMatch([...$this->defaults, 'host' => rawurldecode($host)]);
     }
 
     /**
