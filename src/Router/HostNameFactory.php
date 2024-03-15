@@ -12,10 +12,10 @@ declare(strict_types = 1);
 
 namespace Mimmi20\Routing\Router;
 
-use Interop\Container\ContainerInterface;
 use Laminas\Router\Exception\InvalidArgumentException;
 use Laminas\ServiceManager\Exception\ServiceNotCreatedException;
 use Laminas\ServiceManager\Factory\FactoryInterface;
+use Psr\Container\ContainerInterface;
 
 use function is_array;
 
