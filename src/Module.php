@@ -15,6 +15,7 @@ namespace Mimmi20\Routing;
 
 use Laminas\ModuleManager\Feature\ConfigProviderInterface;
 use Laminas\ModuleManager\Feature\DependencyIndicatorInterface;
+use Override;
 
 final class Module implements ConfigProviderInterface, DependencyIndicatorInterface
 {
@@ -24,6 +25,7 @@ final class Module implements ConfigProviderInterface, DependencyIndicatorInterf
      *
      * @throws void
      */
+    #[Override]
     public function getConfig(): array
     {
         $provider = new ConfigProvider();
@@ -41,6 +43,7 @@ final class Module implements ConfigProviderInterface, DependencyIndicatorInterf
      *
      * @throws void
      */
+    #[Override]
     public function getModuleDependencies(): array
     {
         return ['Laminas\Router'];

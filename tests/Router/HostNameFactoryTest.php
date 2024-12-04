@@ -16,6 +16,7 @@ namespace Mimmi20Test\Routing\Router;
 use Laminas\ServiceManager\Exception\ServiceNotCreatedException;
 use Mimmi20\Routing\Router\HostName;
 use Mimmi20\Routing\Router\HostNameFactory;
+use Override;
 use PHPUnit\Framework\Exception;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
@@ -27,6 +28,7 @@ final class HostNameFactoryTest extends TestCase
     private HostNameFactory $object;
 
     /** @throws void */
+    #[Override]
     protected function setUp(): void
     {
         $this->object = new HostNameFactory();

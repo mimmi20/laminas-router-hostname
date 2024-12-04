@@ -20,6 +20,7 @@ use Laminas\Stdlib\ArrayUtils;
 use Laminas\Stdlib\RequestInterface as Request;
 use Laminas\Uri\Exception\InvalidUriPartException;
 use Laminas\Uri\Http;
+use Override;
 use Traversable;
 
 use function array_key_exists;
@@ -76,6 +77,7 @@ final class HostName implements RouteInterface
      *
      * @phpcsSuppress SlevomatCodingStandard.TypeHints.ParameterTypeHint.MissingNativeTypeHint
      */
+    #[Override]
     public static function factory($options = []): self
     {
         if ($options instanceof Traversable) {
@@ -125,6 +127,7 @@ final class HostName implements RouteInterface
      *
      * @throws void
      */
+    #[Override]
     public function match(Request $request): RouteMatch | null
     {
         if (!method_exists($request, 'getUri')) {
@@ -162,6 +165,7 @@ final class HostName implements RouteInterface
      *
      * @phpcsSuppress SlevomatCodingStandard.Functions.UnusedParameter.UnusedParameter
      */
+    #[Override]
     public function assemble(array $params = [], array $options = []): string
     {
         $this->assembledParams = [];
@@ -215,6 +219,7 @@ final class HostName implements RouteInterface
      *
      * @throws void
      */
+    #[Override]
     public function getAssembledParams(): array
     {
         return $this->assembledParams;

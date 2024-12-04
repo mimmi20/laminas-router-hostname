@@ -16,6 +16,7 @@ namespace Mimmi20\Routing\Router;
 use Laminas\Router\Exception\InvalidArgumentException;
 use Laminas\ServiceManager\Exception\ServiceNotCreatedException;
 use Laminas\ServiceManager\Factory\FactoryInterface;
+use Override;
 use Psr\Container\ContainerInterface;
 
 use function is_array;
@@ -32,6 +33,7 @@ final class HostNameFactory implements FactoryInterface
      * @phpcsSuppress SlevomatCodingStandard.Functions.UnusedParameter.UnusedParameter
      * @phpcsSuppress SlevomatCodingStandard.TypeHints.ParameterTypeHint.MissingNativeTypeHint
      */
+    #[Override]
     public function __invoke(ContainerInterface $container, $requestedName, array | null $options = null): HostName
     {
         if (!is_array($options)) {
