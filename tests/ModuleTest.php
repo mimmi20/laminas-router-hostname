@@ -3,7 +3,7 @@
 /**
  * This file is part of the mimmi20/laminas-router-hostname package.
  *
- * Copyright (c) 2021-2024, Thomas Mueller <mimmi20@live.de>
+ * Copyright (c) 2021-2025, Thomas Mueller <mimmi20@live.de>
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -17,14 +17,10 @@ use Mimmi20\Routing\Module;
 use Mimmi20\Routing\Router\HostName;
 use PHPUnit\Framework\Exception;
 use PHPUnit\Framework\TestCase;
-use SebastianBergmann\RecursionContext\InvalidArgumentException;
 
 final class ModuleTest extends TestCase
 {
-    /**
-     * @throws Exception
-     * @throws InvalidArgumentException
-     */
+    /** @throws Exception */
     public function testGetConfig(): void
     {
         $object = new Module();
@@ -51,10 +47,7 @@ final class ModuleTest extends TestCase
         self::assertCount(0, $config['router']['routes']);
     }
 
-    /**
-     * @throws Exception
-     * @throws InvalidArgumentException
-     */
+    /** @throws Exception */
     public function testGetModuleDependencies(): void
     {
         $module = new Module();
