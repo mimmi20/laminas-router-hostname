@@ -3,7 +3,7 @@
 /**
  * This file is part of the mimmi20/laminas-router-hostname package.
  *
- * Copyright (c) 2021-2024, Thomas Mueller <mimmi20@live.de>
+ * Copyright (c) 2021-2025, Thomas Mueller <mimmi20@live.de>
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -70,8 +70,7 @@ final class HostName implements RouteInterface
      *
      * @see    \Laminas\Router\RouteInterface::factory()
      *
-     * @param array<string, (array<int|string, mixed>|string)>|bool|Traversable<string, mixed> $options
-     * @phpstan-param array{host?: string, hosts?: array<int|string, string>, defaults?: array<int|string, mixed>}|Traversable<string, mixed>|bool $options
+     * @param bool|iterable<string, (array<int|string, mixed>|string)> $options
      *
      * @throws InvalidArgumentException
      *
