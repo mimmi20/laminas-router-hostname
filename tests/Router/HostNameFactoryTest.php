@@ -16,7 +16,6 @@ namespace Mimmi20Test\Routing\Router;
 use Laminas\ServiceManager\Exception\ServiceNotCreatedException;
 use Mimmi20\Routing\Router\HostName;
 use Mimmi20\Routing\Router\HostNameFactory;
-use Override;
 use PHPUnit\Framework\Exception;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
@@ -25,16 +24,10 @@ use function assert;
 
 final class HostNameFactoryTest extends TestCase
 {
-    private HostNameFactory $object;
-
-    /** @throws void */
-    #[Override]
-    protected function setUp(): void
-    {
-        $this->object = new HostNameFactory();
-    }
-
-    /** @throws ServiceNotCreatedException */
+    /**
+     * @throws ServiceNotCreatedException
+     * @throws Exception
+     */
     public function testInvokeWithoutOptions(): void
     {
         $container = $this->getMockBuilder(ContainerInterface::class)->getMock();
@@ -44,10 +37,13 @@ final class HostNameFactoryTest extends TestCase
         $this->expectExceptionCode(0);
         $this->expectExceptionMessage('Options must be an Array');
 
-        ($this->object)($container, 'test');
+        (new HostNameFactory())($container, 'test');
     }
 
-    /** @throws ServiceNotCreatedException */
+    /**
+     * @throws ServiceNotCreatedException
+     * @throws Exception
+     */
     public function testInvokeFailed(): void
     {
         $container = $this->getMockBuilder(ContainerInterface::class)->getMock();
@@ -57,7 +53,7 @@ final class HostNameFactoryTest extends TestCase
         $this->expectExceptionCode(0);
         $this->expectExceptionMessage('an error occured while creating this router');
 
-        ($this->object)($container, 'test', []);
+        (new HostNameFactory())($container, 'test', []);
     }
 
     /**
@@ -71,7 +67,7 @@ final class HostNameFactoryTest extends TestCase
 
         self::assertInstanceOf(
             HostName::class,
-            ($this->object)($container, 'test', ['host' => 'abc.test']),
+            (new HostNameFactory())($container, 'test', ['host' => 'abc.test']),
         );
     }
 }
