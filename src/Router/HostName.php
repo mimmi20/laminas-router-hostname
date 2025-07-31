@@ -73,8 +73,6 @@ final class HostName implements RouteInterface
      * @param bool|iterable<string, (array<int|string, mixed>|string)> $options
      *
      * @throws InvalidArgumentException
-     *
-     * @phpcsSuppress SlevomatCodingStandard.TypeHints.ParameterTypeHint.MissingNativeTypeHint
      */
     #[Override]
     public static function factory($options = []): self
