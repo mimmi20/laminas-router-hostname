@@ -7,11 +7,13 @@
 ## Code Status
 
 [![codecov](https://codecov.io/gh/mimmi20/laminas-router-hostname/branch/master/graph/badge.svg)](https://codecov.io/gh/mimmi20/laminas-router-hostname)
-[![Test Coverage](https://api.codeclimate.com/v1/badges/3815a67029dbccf2c27d/test_coverage)](https://codeclimate.com/github/mimmi20/laminas-router-hostname/test_coverage)
 [![Average time to resolve an issue](http://isitmaintained.com/badge/resolution/mimmi20/laminas-router-hostname.svg)](http://isitmaintained.com/project/mimmi20/laminas-router-hostname "Average time to resolve an issue")
 [![Percentage of issues still open](http://isitmaintained.com/badge/open/mimmi20/laminas-router-hostname.svg)](http://isitmaintained.com/project/mimmi20/laminas-router-hostname "Percentage of issues still open")
 [![Mutation testing badge](https://img.shields.io/endpoint?style=flat&url=https%3A%2F%2Fbadge-api.stryker-mutator.io%2Fgithub.com%2Fmimmi20%2Flaminas-router-hostname%2Fmaster)](https://dashboard.stryker-mutator.io/reports/github.com/mimmi20/laminas-router-hostname/master)
-[![Maintainability](https://api.codeclimate.com/v1/badges/3815a67029dbccf2c27d/maintainability)](https://codeclimate.com/github/mimmi20/laminas-router-hostname/maintainability)
+
+## Introduction
+
+This component provides a Router for Laminas MVC to match a host name.
 
 ## Requirements
 
