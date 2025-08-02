@@ -1,6 +1,6 @@
 {
   "name": "mimmi20/laminas-router-hostname",
-  "description": "Provides a GitHub repository laminas-router-hostname for a PHP library, using GitHub actions.",
+  "description": "Provides a Router for Laminas MVC to match a host name",
   "license": "MIT",
   "type": "library",
   "authors": [
